@@ -24,8 +24,8 @@ Ensure the following dependencies are installed on the host system:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/username-anda/yamori-bot.git
-   cd yamori-bot
+   git clone https://github.com/Sayskh/Yamori-Bot.git
+   cd Yamori-Bot
    ```
 
 2. **Install dependencies:**
