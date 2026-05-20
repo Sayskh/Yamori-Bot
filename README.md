@@ -38,7 +38,11 @@ Ensure the following dependencies are installed on the host system:
    ```env
    NODE_ENV=development
    LOG_LEVEL=info
+   
+   # Required for the .download feature (TikTok, IG, Twitter, YouTube):
+   API_URL=https://api.example.com
    ```
+   > **Note on `API_URL`**: The `.download` feature (`src/commands/utils/download.ts`) relies on an external API backend (`src/services/api.ts`) to fetch social media links. You must provide a valid API endpoint that returns the expected JSON structure for downloads to work.
 
 ## Usage
 
