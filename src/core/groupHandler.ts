@@ -1,0 +1,66 @@
+import { WASocket } from 'baileys';
+import dataManager from './dataManager';
+import { replaceVariables } from '../utils/helpers';
+import log from '../utils/logger';
+import { getAdminConfig } from './configLoader';
+import fs from 'fs';
+
+const glog = log.child({ module: 'group' });
+
+export async function handleGroupParticipantsUpdate(sock: WASocket, update: { id: string; participants: string[]; action: 'add' | 'remove' | 'promote' | 'demote' }): Promise<void> {
+    const { id, participants, action } = update;
+
+    if (action !== 'add' && action !== 'remove') return;
+
+    try {
+        let botId = sock.user?.id || '';
+        if (botId.includes(':')) botId = botId.split(':')[0];
+        if (!botId.endsWith('@s.whatsapp.net')) botId += '@s.whatsapp.net';
+        botId = botId.replace(/@s\.whatsapp\.net@s\.whatsapp\.net/g, '@s.whatsapp.net'); // safety
+
+        const db = dataManager.db;
+        const settings = await db.getGroupSettings(botId, id);
+
+        glog.info({ action, botId, groupId: id, settingsFound: !!settings, welcomeEnabled: settings?.welcomeEnabled, goodbyeEnabled: settings?.goodbyeEnabled }, 'Group participant update triggered');
+
+        // If settings doesn't strictly have the properties defined, fallback to false
+        const welcomeEnabled = settings ? settings.welcomeEnabled : false;
+        const goodbyeEnabled = settings ? settings.goodbyeEnabled : false;
+
+        let template: string | undefined;
+        let imagePath: string | null = null;
+
+        if (action === 'add' && welcomeEnabled) {
+            template = settings?.welcome || getAdminConfig().welcome_template;
+            imagePath = settings?.welcomeImage || null;
+        } else if (action === 'remove' && goodbyeEnabled) {
+            template = settings?.goodbye || getAdminConfig().goodbye_template;
+            imagePath = settings?.goodbyeImage || null;
+        }
+
+        if (!template) return;
+
+        for (const participant of participants) {
+            const userNumber = participant.split('@')[0];
+            const text = replaceVariables(template, {
+                user: `@${userNumber}`,
+                groupName: 'Group',
+            });
+
+            if (imagePath && fs.existsSync(imagePath)) {
+                await sock.sendMessage(id, {
+                    image: { url: imagePath },
+                    caption: text,
+                    mentions: [participant],
+                });
+            } else {
+                await sock.sendMessage(id, {
+                    text,
+                    mentions: [participant],
+                });
+            }
+        }
+    } catch (err) {
+        glog.error({ err, group: id }, 'Failed to handle participant update');
+    }
+}

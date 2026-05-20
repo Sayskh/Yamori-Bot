@@ -1,0 +1,9 @@
+﻿# Konfigurasi teks developer (personal mode)
+# File ini otomatis di-reload (tidak perlu restart bot)
+
+broadcast_template: |
+  📢 *PENGUMUMAN DARI ADMIN*
+
+  @broadcastMsg
+
+  _pesan ini dikirim secara otomatis_

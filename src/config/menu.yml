@@ -1,0 +1,22 @@
+# Konfigurasi Tampilan Menu Bot
+# File ini akan otomatis di-reload jika ada perubahan (tidak perlu restart bot)
+
+header: "· · · *{botName} MENU* · · ·"
+footer: |
+  · · · · · · · · · · ·
+    {prefix}help <command>
+
+categoryHeader: "✦ *{category}*"
+commandItem: "  › {command}"
+
+categoryLabels:
+  Main: "MAIN"
+  Utils: "GENERAL"
+  Admins: "ADMIN"
+  Dev: "DEVELOPER"
+
+categoriesOrder:
+  - "Main"
+  - "Utils"
+  - "Admins"
+  - "Dev"
