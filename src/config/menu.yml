@@ -1,6 +1,3 @@
-# Konfigurasi Tampilan Menu Bot
-# File ini akan otomatis di-reload jika ada perubahan (tidak perlu restart bot)
-
 header: "· · · *{botName} MENU* · · ·"
 footer: |
   · · · · · · · · · · ·
