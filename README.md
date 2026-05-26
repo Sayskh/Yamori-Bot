@@ -1,101 +1,128 @@
-# Yamori WhatsApp Bot
+<div align="center">
 
-Yamori is a high-performance, multi-session WhatsApp bot built on [Baileys](https://github.com/WhiskeySockets/Baileys). Designed with a modern TypeScript architecture, it prioritizes stability, efficient multi-session handling, and provides a professional CLI dashboard for monitoring and management.
+# 🦎 Yamori WhatsApp Bot
 
-Suitable for personal use, group moderation, and production deployments.
+![Node.js](https://img.shields.io/badge/Node.js-≥20.0.0-339933?style=for-the-badge&logo=node.js&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Baileys](https://img.shields.io/badge/Baileys-WhatsApp%20Web%20API-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
 
-## Architecture & Features
+**High-performance, multi-session WhatsApp bot** built on [Baileys](https://github.com/WhiskeySockets/Baileys).
 
-- **Multi-Session Management**: Run and manage multiple WhatsApp bot instances within a single Node.js process.
-- **Advanced CLI Dashboard**: Monitor connection states, memory heap usage, total messages processed, and uptime per session in real-time via the terminal.
-- **SQLite Storage**: Lightweight, local SQLite database for persisting state and group configurations (welcome/goodbye messages, anti-link rules).
-- **Dynamic Configuration**: Centralized configuration for menus and templates via `.yml` files in `src/config/`. Changes apply without requiring a process restart.
-- **Group Moderation**: Automated group management, including an anti-link system that detects and removes members violating link rules.
-- **Media Conversion**: Built-in sticker generation from images and short videos utilizing `ffmpeg` and `node-webpmux`. Conversion algorithms are optimized to stay within strict memory and file-size constraints for cross-platform (iOS/Android) compatibility.
-- **Structured Logging**: Utilizing `pino` for both formatted console output and persistent file logging (`data/logs/bot.log`).
+Dibangun dengan arsitektur TypeScript modern — mengutamakan stabilitas,
+multi-session handling yang efisien untuk banyak bot, dan CLI dashboard.
 
-## System Requirements
+</div>
 
-Ensure the following dependencies are installed on the host system:
-- **Node.js**: v20.0.0 or higher.
-- **FFmpeg**: Required for media processing and sticker conversion.
+---
+
+## Features
+
+| Feature | Deskripsi |
+|---|---|
+| **Multi-Session** | Jalankan beberapa bot WhatsApp sekaligus dalam satu process Node.js |
+| **CLI Dashboard** | Monitor koneksi, memory usage, jumlah pesan, dan uptime secara real-time |
+| **SQLite Storage** | Database ringan untuk state & konfigurasi grup (welcome, anti-link, dll) |
+| **Dynamic Config** | Config via `.yml` — perubahan langsung apply tanpa restart |
+| **Group Moderation** | Anti-link system otomatis, kick member yang melanggar aturan |
+| **Sticker Maker** | Generate stiker dari gambar/video via `ffmpeg` + `node-webpmux` |
+| **Media Downloader** | Download dari TikTok, Instagram, Twitter/X, Facebook, YouTube (`.dl <url>`) |
+| **Structured Logging** | Logging via `pino` — console output + file persist (`data/logs/bot.log`) |
+
+## Requirements
+
+- ![Node.js](https://img.shields.io/badge/Node.js-≥20.0.0-339933?style=flat-square&logo=node.js&logoColor=white) 
+- ![FFmpeg](https://img.shields.io/badge/FFmpeg-required-007808?style=flat-square&logo=ffmpeg&logoColor=white) untuk media processing & sticker conversion
 
 ## Installation
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/Sayskh/Yamori-Bot.git
-   cd Yamori-Bot
-   ```
+```bash
+# 1. Clone repo
+git clone https://github.com/Sayskh/Yamori-Bot.git
+cd Yamori-Bot
 
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+# 2. Install dependencies
+npm install
 
-3. **Environment Setup:**
-   Create a `.env` file in the project root:
-   ```env
-   NODE_ENV=development
-   LOG_LEVEL=info
-   
-   # Required for the .download feature (TikTok, IG, Twitter, YouTube):
-   API_URL=https://api.example.com
-   ```
-   > **Note on `API_URL`**: The `.download` feature (`src/commands/utils/download.ts`) relies on an external API backend (`src/services/api.ts`) to fetch social media links. You must provide a valid API endpoint that returns the expected JSON structure for downloads to work.
+# 3. Setup environment
+cp .env.example .env
+```
+
+Edit file `.env` sesuai kebutuhan:
+
+```env
+BOT_NAME=Yamori
+PREFIX=.
+DEV=628xxxxxxxxxx
+API_URL=https://apicobalt.mgytr.top/
+BLOCK_DMS=true
+```
+
+> [!IMPORTANT]
+> **Setup `API_URL` (Fitur Download):**
+> Agar fitur download video/media (`.download`) dapat berfungsi, bot memerlukan Cobalt API yang aktif.
+> 
+> * **Mengapa tidak menggunakan instance resmi (`api.cobalt.tools`)?** Instance resmi menggunakan proteksi Turnstile (anti-bot) sehingga tidak dapat diakses langsung oleh bot WhatsApp.
+> * **Panduan Konfigurasi:**
+>   1. Cari server alternatif yang aktif melalui **[cobalt.directory](https://cobalt.directory)**.
+>   2. Pilih server dengan indikator **hijau (skor 100%)** yang tidak memerlukan autentikasi (tanpa tanda JWT/kunci API).
+>   3. Salin URL server tersebut dan gunakan sebagai nilai `API_URL` di file `.env`.
+> 
+> *Catatan: Nilai default `https://apicobalt.mgytr.top/` sudah diuji dan dapat langsung digunakan. Jika fitur download berhenti berfungsi di kemudian hari, Anda cukup memperbarui variabel tersebut dengan server aktif yang baru dari direktori di atas.*
 
 ## Usage
 
-For development (with hot-reloading via nodemon):
 ```bash
+# Development (hot-reload)
 npm run dev
-```
 
-For production deployment:
-```bash
+# Production
 npm run build
 npm start
 ```
 
-### Initializing a Session
+### Menambahkan Session
 
-Once the bot manager is running, use the built-in CLI to initialize a new WhatsApp session:
+Setelah bot manager jalan, tambahkan sesi baru lewat CLI:
+
 ```
 bot> :add <session_name>
 ```
-Scan the generated QR Code using the linked devices feature in the WhatsApp application.
 
-Alternatively, initialize a session on boot:
+Scan QR Code yang muncul pakai fitur **Linked devices** di WhatsApp.
+
+Atau langsung saat boot:
 ```bash
 npm start add <session_name>
 ```
 
 ## CLI Commands
 
-The Yamori interactive CLI supports the following commands:
-
-| Command | Description |
+| Command | Fungsi |
 |---|---|
-| `:status` | Displays the advanced dashboard (memory, sessions, metrics). |
-| `:add <name>` | Initializes and pairs a new WhatsApp session. |
-| `:del <name>` | Permanently deletes a session and clears its local state. |
-| `:restart <name>`| Restarts a specific session process. |
-| `:clean` | Removes all sessions currently in a `Disconnected` state. |
-| `:logs [n]` | Tails the last *n* lines of the system log (default: 10). |
-| `:clear` | Clears the terminal buffer. |
-| `:exit` | Gracefully terminates the bot process. |
+| `:status` | Dashboard lengkap (memory, sessions, metrics) |
+| `:add <name>` | Tambah & pair session WhatsApp baru |
+| `:del <name>` | Hapus session permanen + clear state |
+| `:restart <name>` | Restart session tertentu |
+| `:clean` | Bersihkan semua session `Disconnected` |
+| `:logs [n]` | Lihat *n* baris terakhir log (default: 10) |
+| `:clear` | Clear terminal |
+| `:exit` | Stop bot gracefully |
 
-## Configuration Structure
+## Configuration
 
-Templates and configurations are managed via YAML files located in `src/config/`:
-- `admin.yml`: Group moderation templates (welcome, goodbye, promote, kick).
-- `menu.yml`: Command categorization, labels, and menu structures.
-- `dev.yml`: Broadcast templates and developer-specific settings.
+Config dikelola lewat file YAML di `src/config/`:
+
+| File | Fungsi |
+|---|---|
+| `admin.yml` | Template moderasi grup (welcome, goodbye, promote, kick) |
+| `menu.yml` | Kategorisasi command & struktur menu |
+| `dev.yml` | Broadcast template & dev settings |
 
 ## Contributing
 
-Pull requests are welcome. For major architectural changes, please open an issue first to discuss the proposed modifications.
+Kontribusi dalam bentuk *pull request* sangat kami apresiasi! Untuk perubahan berskala besar atau modifikasi arsitektur utama, mohon buat *issue* terlebih dahulu guna mendiskusikan rencana perubahan yang diusulkan.
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+Licensed under the [MIT License](LICENSE).
