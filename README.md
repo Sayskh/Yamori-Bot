@@ -119,6 +119,12 @@ Config dikelola lewat file YAML di `src/config/`:
 | `menu.yml` | Kategorisasi command & struktur menu |
 | `dev.yml` | Broadcast template & dev settings |
 
+### Template Variables
+
+Pesan template seperti `setwelcome`, `setgoodbye`, dan `setclose` mendukung variabel.
+
+Lihat **[VARIABLES.md](VARIABLES.md)** untuk daftar lengkap variabel yang tersedia (`@user`, `@group`, `@time`, dll) beserta contoh penggunaannya.
+
 ## Contributing
 
 Kontribusi dalam bentuk *pull request* sangat kami apresiasi! Untuk perubahan berskala besar atau modifikasi arsitektur utama, mohon buat *issue* terlebih dahulu guna mendiskusikan rencana perubahan yang diusulkan.
