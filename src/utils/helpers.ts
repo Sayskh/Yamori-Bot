@@ -23,8 +23,6 @@ export function replaceVariables(
         name?: string;
         user?: string;
         groupName?: string;
-        itemName?: string;
-        desc?: string;
         groupId?: string;
         prefix?: string;
         broadcastMsg?: string;
@@ -47,8 +45,6 @@ export function replaceVariables(
         .replace(/@time/gi, formatTime(now))
         .replace(/@date/gi, formatDate(now))
         .replace(/@greeting/gi, getGreeting())
-        .replace(/@desc/gi, vars.desc || '')
-        .replace(/@x/gi, vars.itemName || '')
         .replace(/@groupId/gi, vars.groupId || '')
         .replace(/\{prefix\}/gi, vars.prefix || '.')
         .replace(/@broadcastMsg/gi, vars.broadcastMsg || '')
