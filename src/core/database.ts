@@ -2,8 +2,11 @@ import sqlite3 from 'sqlite3';
 import { open, Database as SQLiteDatabase } from 'sqlite';
 import path from 'path';
 import fs from 'fs/promises';
+import log from '../utils/logger';
 
-// ─── Row interfaces ─────────────────────────────────────────
+const dblog = log.child({ module: 'database' });
+
+// --- Row interfaces ---
 
 interface PrefixRow {
     bot_id: string;
@@ -33,7 +36,7 @@ class Database {
     private db: SQLiteDatabase | null = null;
     private dbPath: string = path.join(__dirname, '../../data/database.sqlite');
 
-    // ─── Lifecycle ───────────────────────────────────────────
+    // --- Lifecycle ---
 
     /** Open the database file and ensure all tables exist. */
     async init(): Promise<void> {
@@ -54,9 +57,9 @@ class Database {
             `);
 
             await this.createTables();
-            console.log('Connected to SQLite database (WAL mode)');
+            dblog.info('Connected to SQLite database (WAL mode)');
         } catch (error) {
-            console.error('Error connecting to database:', error);
+            dblog.error({ err: error }, 'Error connecting to database');
             throw error;
         }
     }
@@ -114,7 +117,7 @@ class Database {
     }
 
 
-    // ─── Prefix methods ──────────────────────────────────────
+    // --- Prefix methods ---
 
     /** Get the custom prefix for a chat, or null if using default. */
     async getPrefix(botId: string, chatId: string): Promise<string | null> {
@@ -149,7 +152,7 @@ class Database {
         return prefixes;
     }
 
-    // ─── Badwords methods ────────────────────────────────────
+    // --- Badwords methods ---
 
     /** Add a badword to the group's blocklist */
     async addBadword(botId: string, groupId: string, word: string): Promise<void> {
@@ -179,9 +182,9 @@ class Database {
         return rows.map(r => r.word);
     }
 
-    // ─── Group settings methods ──────────────────────────────
+    // --- Group settings methods ---
 
-    /** Get welcome/goodbye/lock/unlock/done messages and modes for a group. */
+    /** Get welcome/goodbye/lock/unlock messages and modes for a group. */
     async getGroupSettings(botId: string, groupId: string): Promise<{
         welcome: string | null,
         goodbye: string | null,
@@ -211,94 +214,32 @@ class Database {
         };
     }
 
-    /** Set the welcome message for a group (null = disabled). */
-    async setWelcomeMessage(botId: string, groupId: string, message: string | null): Promise<void> {
+    private async updateGroupSetting(botId: string, groupId: string, column: string, value: any): Promise<void> {
         if (!this.db) throw new Error('Database not initialized');
         await this.db.run(
-            `INSERT INTO group_settings (bot_id, group_id, welcome_message) VALUES (?, ?, ?)
-             ON CONFLICT(bot_id, group_id) DO UPDATE SET welcome_message = ?`,
-            botId, groupId, message, message
+            `INSERT INTO group_settings (bot_id, group_id, ${column}) VALUES (?, ?, ?)
+             ON CONFLICT(bot_id, group_id) DO UPDATE SET ${column} = ?`,
+            botId, groupId, value, value
         );
     }
 
-    /** Set the goodbye message for a group (null = disabled). */
-    async setGoodbyeMessage(botId: string, groupId: string, message: string | null): Promise<void> {
-        if (!this.db) throw new Error('Database not initialized');
-        await this.db.run(
-            `INSERT INTO group_settings (bot_id, group_id, goodbye_message) VALUES (?, ?, ?)
-             ON CONFLICT(bot_id, group_id) DO UPDATE SET goodbye_message = ?`,
-            botId, groupId, message, message
-        );
-    }
+    async setWelcomeMessage(botId: string, groupId: string, message: string | null) { return this.updateGroupSetting(botId, groupId, 'welcome_message', message); }
+    async setGoodbyeMessage(botId: string, groupId: string, message: string | null) { return this.updateGroupSetting(botId, groupId, 'goodbye_message', message); }
+    async setWelcomeImage(botId: string, groupId: string, imagePath: string | null) { return this.updateGroupSetting(botId, groupId, 'welcome_image', imagePath); }
+    async setGoodbyeImage(botId: string, groupId: string, imagePath: string | null) { return this.updateGroupSetting(botId, groupId, 'goodbye_image', imagePath); }
+    async setLockMessage(botId: string, groupId: string, message: string | null) { return this.updateGroupSetting(botId, groupId, 'lock_message', message); }
+    async setUnlockMessage(botId: string, groupId: string, message: string | null) { return this.updateGroupSetting(botId, groupId, 'unlock_message', message); }
 
-    /** Set the welcome image path for a group (null = disabled). */
-    async setWelcomeImage(botId: string, groupId: string, imagePath: string | null): Promise<void> {
-        if (!this.db) throw new Error('Database not initialized');
-        await this.db.run(
-            `INSERT INTO group_settings (bot_id, group_id, welcome_image) VALUES (?, ?, ?)
-             ON CONFLICT(bot_id, group_id) DO UPDATE SET welcome_image = ?`,
-            botId, groupId, imagePath, imagePath
-        );
-    }
-
-    /** Set the goodbye image path for a group (null = disabled). */
-    async setGoodbyeImage(botId: string, groupId: string, imagePath: string | null): Promise<void> {
-        if (!this.db) throw new Error('Database not initialized');
-        await this.db.run(
-            `INSERT INTO group_settings (bot_id, group_id, goodbye_image) VALUES (?, ?, ?)
-             ON CONFLICT(bot_id, group_id) DO UPDATE SET goodbye_image = ?`,
-            botId, groupId, imagePath, imagePath
-        );
-    }
-
-    /** Set the lock announcement message for a group. */
-    async setLockMessage(botId: string, groupId: string, message: string | null): Promise<void> {
-        if (!this.db) throw new Error('Database not initialized');
-        await this.db.run(
-            `INSERT INTO group_settings (bot_id, group_id, lock_message) VALUES (?, ?, ?)
-             ON CONFLICT(bot_id, group_id) DO UPDATE SET lock_message = ?`,
-            botId, groupId, message, message
-        );
-    }
-
-    /** Set the unlock announcement message for a group. */
-    async setUnlockMessage(botId: string, groupId: string, message: string | null): Promise<void> {
-        if (!this.db) throw new Error('Database not initialized');
-        await this.db.run(
-            `INSERT INTO group_settings (bot_id, group_id, unlock_message) VALUES (?, ?, ?)
-             ON CONFLICT(bot_id, group_id) DO UPDATE SET unlock_message = ?`,
-            botId, groupId, message, message
-        );
-    }
-
-    /** Enable or disable welcome message */
     async toggleWelcome(botId: string, groupId: string, enabled: boolean): Promise<void> {
-        if (!this.db) throw new Error('Database not initialized');
-        await this.db.run(
-            `INSERT INTO group_settings (bot_id, group_id, welcome_enabled) VALUES (?, ?, ?)
-             ON CONFLICT(bot_id, group_id) DO UPDATE SET welcome_enabled = ?`,
-            botId, groupId, enabled ? 1 : 0, enabled ? 1 : 0
-        );
+        await this.updateGroupSetting(botId, groupId, 'welcome_enabled', enabled ? 1 : 0);
     }
 
-    /** Enable or disable goodbye message */
     async toggleGoodbye(botId: string, groupId: string, enabled: boolean): Promise<void> {
-        if (!this.db) throw new Error('Database not initialized');
-        await this.db.run(
-            `INSERT INTO group_settings (bot_id, group_id, goodbye_enabled) VALUES (?, ?, ?)
-             ON CONFLICT(bot_id, group_id) DO UPDATE SET goodbye_enabled = ?`,
-            botId, groupId, enabled ? 1 : 0, enabled ? 1 : 0
-        );
+        await this.updateGroupSetting(botId, groupId, 'goodbye_enabled', enabled ? 1 : 0);
     }
 
-    /** Set antilink mode (off, kick, delete_only) */
     async setAntilinkMode(botId: string, groupId: string, mode: string): Promise<void> {
-        if (!this.db) throw new Error('Database not initialized');
-        await this.db.run(
-            `INSERT INTO group_settings (bot_id, group_id, antilink_mode) VALUES (?, ?, ?)
-             ON CONFLICT(bot_id, group_id) DO UPDATE SET antilink_mode = ?`,
-            botId, groupId, mode, mode
-        );
+        await this.updateGroupSetting(botId, groupId, 'antilink_mode', mode);
     }
 }
 

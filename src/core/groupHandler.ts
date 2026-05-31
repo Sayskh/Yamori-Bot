@@ -3,6 +3,7 @@ import dataManager from './dataManager';
 import { replaceVariables } from '../utils/helpers';
 import log from '../utils/logger';
 import { getAdminConfig } from './configLoader';
+import { getGroupMetadata } from './groupCache';
 import fs from 'fs';
 
 const glog = log.child({ module: 'group' });
@@ -40,23 +41,33 @@ export async function handleGroupParticipantsUpdate(sock: WASocket, update: { id
 
         if (!template) return;
 
+        let groupName = 'Group';
+        try {
+            const metadata = await getGroupMetadata(sock, id);
+            groupName = metadata.subject || 'Group';
+        } catch (e) {
+            glog.warn({ groupId: id, err: e }, 'Failed to fetch group metadata for participant update, using fallback');
+        }
+
         for (const participant of participants) {
-            const userNumber = participant.split('@')[0];
+            const pId = typeof participant === 'string' ? participant : ((participant as any)?.id || '');
+            if (!pId) continue;
+            const userNumber = pId.split('@')[0];
             const text = replaceVariables(template, {
                 user: `@${userNumber}`,
-                groupName: 'Group',
+                groupName: groupName,
             });
 
             if (imagePath && fs.existsSync(imagePath)) {
                 await sock.sendMessage(id, {
                     image: { url: imagePath },
                     caption: text,
-                    mentions: [participant],
+                    mentions: [pId],
                 });
             } else {
                 await sock.sendMessage(id, {
                     text,
-                    mentions: [participant],
+                    mentions: [pId],
                 });
             }
         }
@@ -64,3 +75,4 @@ export async function handleGroupParticipantsUpdate(sock: WASocket, update: { id
         glog.error({ err, group: id }, 'Failed to handle participant update');
     }
 }
+

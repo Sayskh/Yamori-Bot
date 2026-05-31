@@ -27,3 +27,8 @@ export async function getGroupMetadata(sock: WASocket, groupId: string): Promise
     cache.set(groupId, { data, timestamp: now });
     return data;
 }
+
+export function invalidateGroupCache(groupId: string): void {
+    cache.delete(groupId);
+}
+

@@ -99,6 +99,7 @@ async function messageHandler(
             from = remoteJidAlt;
         }
 
+
         // WhatsApp Multi-Device sends messages using @lid instead of @s.whatsapp.net.
         // Extract the real sender from msg.key.participant if available.
         let sender = isGroup
@@ -146,11 +147,18 @@ async function messageHandler(
         botId = botId.replace(/@s\.whatsapp\.net@s\.whatsapp\.net/g, '@s.whatsapp.net');
         await dataManager.loadPrefixes(botId);
 
-        if (isGroup && !isGroupAdmin && !isBotAdmin && body.includes('chat.whatsapp.com/')) {
+        if (isGroup && !isGroupAdmin && !isBotAdmin && /(https?:\/\/\S+|www\.\S+)/i.test(body)) {
             const settings = await dataManager.db.getGroupSettings(botId, from);
             if (settings && settings.antilinkMode !== 'off') {
-                const metadata = await getGroupMetadata(sock, from).catch(() => null);
-                const amIBotAdmin = metadata ? checkGroupAdmin(metadata.participants, botId) : false;
+                let metadata = await getGroupMetadata(sock, from).catch(() => null);
+                let amIBotAdmin = metadata ? checkGroupAdmin(metadata.participants, botId) : false;
+
+                if (metadata && !amIBotAdmin) {
+                    const { invalidateGroupCache } = require('./groupCache');
+                    invalidateGroupCache(from);
+                    metadata = await getGroupMetadata(sock, from).catch(() => null);
+                    amIBotAdmin = metadata ? checkGroupAdmin(metadata.participants, botId) : false;
+                }
 
                 if (amIBotAdmin) {
                     hlog.info({ from, sender }, `Antilink triggered for ${sender}`);
@@ -159,9 +167,7 @@ async function messageHandler(
 
                     if (settings.antilinkMode === 'kick') {
                         await sock.groupParticipantsUpdate(from, [sender], 'remove');
-                        await sock.sendMessage(from, { text: `Telah menghapus pesan dan menendang @${senderNumber} karena mengirim link obrolan grup WhatsApp.`, mentions: [sender] });
-                    } else {
-                        await sock.sendMessage(from, { text: `Pesan dihapus karena mengandung link obrolan grup WhatsApp.` });
+                        await sock.sendMessage(from, { text: `Telah menghapus pesan dan menendang @${senderNumber} karena mengirim link.`, mentions: [sender] });
                     }
                     return;
                 }
@@ -173,23 +179,28 @@ async function messageHandler(
             const badwords = await dataManager.db.getBadwords(botId, from);
             if (badwords.length > 0) {
                 // Determine if bot is admin to delete message
-                const metadata = await getGroupMetadata(sock, from).catch(() => null);
-                const amIBotAdmin = metadata ? checkGroupAdmin(metadata.participants, botId) : false;
+                let metadata = await getGroupMetadata(sock, from).catch(() => null);
+                let amIBotAdmin = metadata ? checkGroupAdmin(metadata.participants, botId) : false;
+
+                if (metadata && !amIBotAdmin) {
+                    const { invalidateGroupCache } = require('./groupCache');
+                    invalidateGroupCache(from);
+                    metadata = await getGroupMetadata(sock, from).catch(() => null);
+                    amIBotAdmin = metadata ? checkGroupAdmin(metadata.participants, botId) : false;
+                }
 
                 if (amIBotAdmin) {
                     const bodyLower = body.toLowerCase();
                     const containsBadword = badwords.some(word => {
-                        // Match whole words to prevent accidental triggers 
-                        // e.g., blocking "ass" shouldn't block "glass"
-                        const safeWord = escapeRegex(word);
-                        const regex = new RegExp(`\\b${safeWord}\\b`, 'i');
+                        // Match standalone words or surrounded by non-alphanumeric chars
+                        const safeWord = escapeRegex(word.toLowerCase().trim());
+                        const regex = new RegExp(`(^|[^a-zA-Z0-9_])${safeWord}([^a-zA-Z0-9_]|$)`, 'i');
                         return regex.test(bodyLower);
                     });
 
                     if (containsBadword) {
                         hlog.info({ from, sender }, `Badword triggered for ${sender}`);
                         await sock.sendMessage(from, { delete: msg.key });
-                        await sock.sendMessage(from, { text: `Pesan dari @${senderNumber} dihapus karena mengandung kata-kata terlarang.`, mentions: [sender] });
                         return; // Stop processing further commands
                     }
                 }
