@@ -1,9 +1,15 @@
-﻿# Konfigurasi teks developer (personal mode)
+# Konfigurasi teks developer (personal mode)
 # File ini otomatis di-reload (tidak perlu restart bot)
 
 broadcast_template: |
-  📢 *PENGUMUMAN DARI ADMIN*
+  *PENGUMUMAN DARI ADMIN*
 
   @broadcastMsg
 
   _pesan ini dikirim secara otomatis_
+
+uptime_template: |
+  *Bot Uptime*
+
+  Sudah berjalan: @uptime
+  Nyala sejak: @startTime WIB

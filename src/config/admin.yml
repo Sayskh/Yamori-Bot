@@ -1,4 +1,4 @@
-﻿# Konfigurasi Teks Admin & Grup
+# Konfigurasi Teks Admin & Grup
 # File ini otomatis di-reload (tidak perlu restart bot)
 
 welcome_template: |
@@ -10,16 +10,16 @@ goodbye_template: |
   Semoga harimu menyenangkan!
 
 promote_template: |
-  🎉 Selamat! @user sekarang telah diangkat menjadi Admin grup.
+  Selamat! @user sekarang telah diangkat menjadi Admin grup.
 
 demote_template: |
-  ⬇️ Mohon maaf, @user telah diturunkan menjadi member biasa.
+  Mohon maaf, @user telah diturunkan menjadi member biasa.
 
 kick_template: |
-  👋 Telah berhasil mengeluarkan @user dari grup.
+  Telah berhasil mengeluarkan @user dari grup.
 
-lock_template: "🔒 Grup dikunci. Hanya admin yang bisa mengirim pesan."
-unlock_template: "🔓 Grup dibuka. Semua member bisa mengirim pesan."
+lock_template: "Grup dikunci. Hanya admin yang bisa mengirim pesan."
+unlock_template: "Grup dibuka. Semua member bisa mengirim pesan."
 
 groupinfo_template: |
   *[ @groupName ]*
