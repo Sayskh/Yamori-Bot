@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import yaml from 'yaml';
 import log from '../utils/logger';
+import config from '../config';
 
 const CONFIG_DIR = path.join(process.cwd(), 'src/config');
 const MENU_YAML_PATH = path.join(CONFIG_DIR, 'menu.yml');
@@ -33,6 +34,7 @@ export interface AdminConfig {
 
 export interface DevConfig {
     broadcast_template: string;
+    uptime_template: string;
 }
 
 // --- Cache ---
@@ -40,6 +42,7 @@ export interface DevConfig {
 let cachedMenuConfig: MenuConfig | null = null;
 let cachedAdminConfig: AdminConfig | null = null;
 let cachedDevConfig: DevConfig | null = null;
+let cachedLangConfigs: Record<string, Record<string, string>> = {};
 
 // --- Loaders ---
 
@@ -61,6 +64,14 @@ export function getDevConfig(): DevConfig {
     return cachedDevConfig;
 }
 
+export function getLangConfig(langCode: string = config.language): Record<string, string> {
+    const code = langCode.toLowerCase() === 'id' ? 'id' : 'en';
+    if (cachedLangConfigs[code]) return cachedLangConfigs[code];
+    const langPath = path.join(CONFIG_DIR, 'lang', `${code}.yml`);
+    cachedLangConfigs[code] = loadYamlConfig<Record<string, string>>(langPath);
+    return cachedLangConfigs[code];
+}
+
 function loadYamlConfig<T>(filePath: string): T {
     try {
         if (!fs.existsSync(filePath)) {
@@ -79,7 +90,7 @@ function loadYamlConfig<T>(filePath: string): T {
 function setupWatcher(filePath: string, updateCache: (parsed: any) => void) {
     try {
         if (fs.existsSync(filePath)) {
-            fs.watch(filePath, (eventType) => {
+            const watcher = fs.watch(filePath, (eventType) => {
                 if (eventType === 'change') {
                     try {
                         const parsed = yaml.parse(fs.readFileSync(filePath, 'utf-8'));
@@ -89,6 +100,9 @@ function setupWatcher(filePath: string, updateCache: (parsed: any) => void) {
                         log.error({ err: e, file: path.basename(filePath) }, 'Error reloading config');
                     }
                 }
+            });
+            watcher.on('error', (err) => {
+                log.error({ err, file: path.basename(filePath) }, 'Watcher error');
             });
         }
     } catch (e) {
@@ -106,4 +120,12 @@ setupWatcher(ADMIN_YAML_PATH, (parsed) => {
 
 setupWatcher(DEV_YAML_PATH, (parsed) => {
     cachedDevConfig = parsed;
+});
+
+setupWatcher(path.join(CONFIG_DIR, 'lang', 'en.yml'), (parsed) => {
+    cachedLangConfigs['en'] = parsed;
+});
+
+setupWatcher(path.join(CONFIG_DIR, 'lang', 'id.yml'), (parsed) => {
+    cachedLangConfigs['id'] = parsed;
 });

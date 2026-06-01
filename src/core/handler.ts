@@ -8,6 +8,8 @@ import { Command } from '../types/Command';
 import { getGroupMetadata } from './groupCache';
 import { isRateLimited } from '../middleware/rateLimit';
 import log from '../utils/logger';
+import { normalizeBotId } from '../utils/jid';
+import { t } from '../utils/lang';
 
 const hlog = log.child({ module: 'handler' });
 
@@ -100,13 +102,10 @@ async function messageHandler(
         }
 
 
-        // WhatsApp Multi-Device sends messages using @lid instead of @s.whatsapp.net.
-        // Extract the real sender from msg.key.participant if available.
         let sender = isGroup
             ? (msg.key.participantAlt || msg.key.participant || '')
             : (remoteJidAlt || msg.key.participant || from);
 
-        // Strip multi-device session id (e.g. 6285...:23@s.whatsapp.net -> 6285...@s.whatsapp.net)
         if (sender.includes(':')) {
             const num = sender.split(':')[0];
             const suffix = sender.split('@')[1] || 's.whatsapp.net';
@@ -141,10 +140,7 @@ async function messageHandler(
         const body = extractBody(msg);
         if (!body.trim()) return;
 
-        let botId = sock.user?.id || '';
-        if (botId.includes(':')) botId = botId.split(':')[0];
-        if (!botId.endsWith('@s.whatsapp.net')) botId += '@s.whatsapp.net';
-        botId = botId.replace(/@s\.whatsapp\.net@s\.whatsapp\.net/g, '@s.whatsapp.net');
+        const botId = normalizeBotId(sock);
         await dataManager.loadPrefixes(botId);
 
         if (isGroup && !isGroupAdmin && !isBotAdmin && /(https?:\/\/\S+|www\.\S+)/i.test(body)) {
@@ -167,7 +163,7 @@ async function messageHandler(
 
                     if (settings.antilinkMode === 'kick') {
                         await sock.groupParticipantsUpdate(from, [sender], 'remove');
-                        await sock.sendMessage(from, { text: `Telah menghapus pesan dan menendang @${senderNumber} karena mengirim link.`, mentions: [sender] });
+                        await sock.sendMessage(from, { text: t('antilink_kick', { user: senderNumber }, settings.language), mentions: [sender] });
                     }
                     return;
                 }
@@ -217,19 +213,25 @@ async function messageHandler(
             const command = commands.get(commandName);
             if (!command) return;
 
+            let lang = 'en';
+            if (isGroup) {
+                const settings = await dataManager.db.getGroupSettings(botId, from);
+                lang = settings.language || 'en';
+            }
+
             if (!isBotAdmin && isRateLimited(sender)) return;
 
             if (command.devOnly && !isBotAdmin) {
-                await sock.sendMessage(from, { text: 'Perintah ini hanya untuk dev.' }, { quoted: msg });
+                await sock.sendMessage(from, { text: t('dev_only', undefined, lang) }, { quoted: msg });
                 return;
             }
 
             if (command.groupAdminOnly && !isGroupAdmin && !isBotAdmin) {
-                await sock.sendMessage(from, { text: 'Perintah ini hanya untuk admin group.' }, { quoted: msg });
+                await sock.sendMessage(from, { text: t('admin_only', undefined, lang) }, { quoted: msg });
                 return;
             }
             if (command.userOnly && !isUser) {
-                await sock.sendMessage(from, { text: 'Perintah ini hanya untuk user biasa.' }, { quoted: msg });
+                await sock.sendMessage(from, { text: t('user_only', undefined, lang) }, { quoted: msg });
                 return;
             }
 
@@ -248,6 +250,8 @@ async function messageHandler(
                 pushname,
                 groupName,
                 dataManager,
+                lang,
+                t: (key: string, replacements?: Record<string, string>) => t(key, replacements, lang),
             };
 
             await command.execute(sock, msg, args, context);

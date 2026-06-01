@@ -8,6 +8,8 @@ const config = {
     mediaPath: process.env.MEDIA_PATH || path.join(process.cwd(), 'data', 'media'),
     adminNumbers: (process.env.DEV || '').split(',').filter(Boolean),
     blockDms: process.env.BLOCK_DMS === 'true',
+    language: process.env.LANGUAGE || 'en',
+    enableCli: process.env.ENABLE_CLI === 'true',
 } as const;
 
 export default config;

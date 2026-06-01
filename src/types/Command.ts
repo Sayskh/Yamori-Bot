@@ -12,6 +12,8 @@ export interface CommandContext {
     pushname: string;
     groupName: string;
     dataManager: DataManager;
+    lang: string;
+    t: (key: string, replacements?: Record<string, string>) => string;
 }
 
 export interface Command {
