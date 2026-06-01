@@ -1,0 +1,234 @@
+group_only: "Perintah ini hanya bisa digunakan di grup."
+dev_only: "Perintah ini hanya untuk dev."
+admin_only: "Perintah ini hanya untuk admin group."
+user_only: "Perintah ini hanya untuk user biasa."
+not_admin: "Bot bukan admin grup."
+success: "Sukses"
+failed: "Gagal"
+user_not_found: "User tidak ditemukan."
+mention_or_reply: "Tag atau balas pesan user yang ingin diproses."
+invalid_number: "Nomor telepon tidak valid."
+privacy_setting: "Gagal menambahkan karena setelan privasi member."
+left_recently: "Gagal menambahkan karena member baru saja keluar."
+already_member: "Sudah menjadi member."
+pinging: "Pinging..."
+pong: "Pong!"
+no_media: "Balas pesan gambar, video, atau stiker."
+fail_process: "Gagal memproses."
+current_prefix: "Prefix saat ini:"
+prefix_default: "Sudah menggunakan prefix default."
+menu_load_fail: "Gagal memuat daftar perintah."
+command_not_found: "Perintah {cmd} tidak ditemukan."
+no_desc: "Tidak ada deskripsi"
+aliases: "Alias"
+usage: "Penggunaan"
+access: "Akses"
+antilink_kick: "Telah menghapus pesan dan menendang @user karena mengirim link."
+invalid_usage: "Penggunaan perintah salah."
+badword_added: "Kata kasar berhasil ditambahkan."
+badword_removed: "Kata kasar berhasil dihapus."
+badword_empty: "Daftar kata kasar di grup ini kosong."
+badword_list: "Daftar kata kasar di grup ini:"
+already_lock: "Grup sudah dikunci sebelumnya."
+already_unlock: "Grup sudah dibuka sebelumnya."
+welcome_enabled: "Pesan welcome berhasil diaktifkan."
+welcome_disabled: "Pesan welcome berhasil dinonaktifkan."
+goodbye_enabled: "Pesan goodbye berhasil diaktifkan."
+goodbye_disabled: "Pesan goodbye berhasil dinonaktifkan."
+giveaway_usage: "Format salah. Contoh: .giveaway 5m 1 Hadiah"
+giveaway_limit: "Durasi minimal 1 menit dan pemenang minimal 1 orang."
+giveaway_active: "Sudah ada giveaway aktif di grup ini."
+giveaway_not_active: "Tidak ada giveaway aktif di grup ini."
+giveaway_no_ended: "Tidak ada giveaway selesai."
+giveaway_no_participants: "Tidak ada peserta untuk di-reroll."
+giveaway_limit: "Durasi minimal 10 detik dan maksimal 7 hari."
+giveaway_winners_limit: "Jumlah pemenang harus antara 1-20."
+giveaway_usage_header: "Format salah. Gunakan:\n{prefix}giveaway <durasi> <winner> <hadiah>"
+broadcast_usage: "Masukkan pesan broadcast."
+add_usage: "Masukkan nomor telepon. Contoh:\n• Satu nomor: .add 628xxx\n• Banyak nomor: .add 628xxx 1234567\n• Dengan kode negara: .add +62812345"
+add_result: "Hasil Penambahan"
+add_success: "Sukses"
+add_already_member: "Sudah Menjadi Member"
+add_failed: "Gagal"
+add_fail_process: "Gagal menambahkan member. Pastikan bot adalah admin."
+user_not_admin: "User tersebut bukan admin."
+user_already_admin: "User tersebut sudah menjadi admin."
+fail_privileges: "Gagal memproses. Bot harus menjadi admin grup."
+prefix_usage: "Penggunaan: {prefix}setprefix <prefix_baru>\nReset: {prefix}setprefix reset"
+prefix_reset: "Prefix berhasil di-reset ke default: {prefix}"
+prefix_limit: "Prefix tidak boleh lebih dari 3 karakter."
+prefix_already: "Sudah menggunakan prefix: {prefix}"
+prefix_changed: "Prefix berhasil diubah menjadi: {prefix}"
+gc_usage: "Gunakan:\n• *{prefix}gc close* — Kunci grup\n• *{prefix}gc open* — Buka grup"
+fail_bot_admin: "Gagal mengubah pengaturan. Bot perlu hak admin."
+already_lock: "Grup sudah dikunci sebelumnya."
+already_unlock: "Grup sudah dibuka sebelumnya."
+giveaway_start_announcement: |
+  *GIVEAWAY*
+
+  Hadiah: {prize}
+  Jumlah Pemenang: {winnersCount}
+  Berakhir: {endTime} WIB
+
+  React {emoji} pada pesan ini untuk ikut serta
+
+  Host: @{host}
+giveaway_end_no_participants: |
+  *GIVEAWAY BERAKHIR*
+
+  Hadiah: {prize}
+
+  Tidak ada peserta.
+
+  Host: @{host}
+giveaway_end_announcement: |
+  *GIVEAWAY BERAKHIR*
+
+  Hadiah: {prize}
+
+  *Pemenang:*
+  {winners}
+
+  Total Peserta: {participantsCount}
+  Host: @{host}
+giveaway_reroll_announcement: |
+  *GIVEAWAY REROLL*
+
+  Hadiah: {prize}
+
+  *Pemenang Baru:*
+  {winners}
+
+lang_current: "*Bahasa Grup*\n\nBahasa saat ini: *{lang}*\n\nUbah bahasa:\n• *{prefix}lang en* (Bahasa Inggris)\n• *{prefix}lang id* (Bahasa Indonesia)"
+lang_changed: "Bahasa grup berhasil diubah ke: *{lang}*"
+lang_invalid: "Bahasa tidak didukung. Pilih *en* atau *id*."
+
+antilink_usage: "*Antilink Mode*\n\nPilih mode:\n• {prefix}antilink kick (Hapus link & Kick)\n• {prefix}antilink delete (Hapus link saja)\n• {prefix}antilink off (Matikan)\n\nSaat ini: *{current}*"
+antilink_success: "Antilink berhasil diatur ke mode: *{mode}*."
+
+badword_usage: "*Pengaturan Badword*\n\nGunakan fitur ini untuk memblokir kata-kata tertentu di grup.\n\n1. *{prefix}badword add <kata1> <kata2>...*\n2. *{prefix}badword del <kata1> <kata2>...*\n3. *{prefix}badword list*\n\nContoh: {prefix}badword add anjing babi"
+badword_add_empty: "Sebutkan kata yang mau diblokir.\nContoh: *{prefix}badword add bodoh jelek*"
+badword_added_count: "Berhasil menambahkan {count} kata ke daftar badword."
+badword_del_empty: "Sebutkan kata yang mau dihapus.\nContoh: *{prefix}badword del bodoh*"
+badword_removed_count: "Berhasil menghapus {count} kata dari daftar badword."
+badword_empty_list: "Grup ini belum memiliki daftar badword."
+badword_list_header: "*Daftar Badword Grup:*\n\n{list}"
+badword_unknown_sub: "Sub-perintah tidak dikenal. Gunakan *add*, *del*, atau *list*."
+
+kick_no_target: "Tag atau balas pesan orang yang ingin di-kick."
+kick_fail: "Gagal mengeluarkan member. Pastikan bot adalah admin grup."
+
+setlock_usage: "*Pesan Lock/Unlock*\n\n{prefix}setclose lock <pesan>\n{prefix}setclose unlock <pesan>\n{prefix}setclose lock off\n{prefix}setclose unlock off\n\nContoh:\n{prefix}setclose lock Grup dikunci. Silakan tunggu.\n\nVariabel: @user @group @time @date @greeting\n\n─────────────────\nLock: {lock}\nUnlock: {unlock}"
+setlock_invalid_type: "Pilih tipe: *lock* atau *unlock*\n\nContoh: *{prefix}setclose lock Grup sedang dikunci*"
+setlock_empty_msg: "Tulis pesan setelah tipe.\n\nContoh: *{prefix}setclose {type} Pesan custom*"
+setlock_reset: "Pesan {type} direset ke default."
+setlock_success: "Pesan *{type}* berhasil diatur.\n\nPreview:\n{message}"
+
+everyone_attention: "*Perhatian Semuanya!*"
+everyone_announce: "*Pengumuman*\n\n{message}"
+
+giveaway_info_header: |
+  *INFO GIVEAWAY*
+
+  • *Hadiah:* {prize}
+  • *Pemenang:* {winnersCount}
+  • *Peserta:* {participantsCount}
+  • *Berakhir:* {endTime} WIB
+  • *Sisa Waktu:* {remaining}
+  • *Host:* @{host}
+giveaway_usage_block: |
+  *Format salah.* Gunakan:
+  {prefix}giveaway <durasi> <winner> <hadiah>
+
+  *Buat:* {prefix}giveaway <durasi> <winner> <hadiah>
+  *Contoh:* {prefix}giveaway 30m 1 iPhone 16 Pro
+
+  *Durasi:* 30s, 5m, 1h, 1d
+  *Winner:* Jumlah pemenang (angka)
+
+  *Sub-perintah:*
+  › {prefix}giveaway end — Akhiri giveaway
+  › {prefix}giveaway reroll — Pick ulang pemenang
+  › {prefix}giveaway info — Info giveaway aktif
+
+time_day: "{value} hari"
+time_hour: "{value} jam"
+time_minute: "{value} menit"
+time_second: "{value} detik"
+time_ended: "Sudah berakhir"
+
+setwelcome_usage: "*Pesan Sambutan*\n\n{prefix}setwelcome <pesan>\nGunakan {prefix}welcome (on/off) untuk menghidupkan/mematikan.\n\nContoh:\n{prefix}setwelcome Halo @user! Selamat datang di @group\n\nKirim/Balas media (gambar/video/dokumen) dengan caption perintah untuk set media juga.\n\nVariabel: @user @group @time @date @greeting\n\n─────────────────\nSaat ini: {current}\nMedia   : {hasMedia}"
+setwelcome_media_success: "Pesan dan media welcome berhasil diatur."
+setwelcome_media_fail: "Gagal menyimpan media welcome. Pesan teks tetap tersimpan jika diisi."
+setwelcome_success: "Pesan sambutan berhasil diatur."
+
+setgoodbye_usage: "*Pesan Member Keluar*\n\n{prefix}setgoodbye <pesan>\nGunakan {prefix}goodbye (on/off) untuk menghidupkan/mematikan.\n\nContoh:\n{prefix}setgoodbye Selamat tinggal @user\n\nKirim/Balas media (gambar/video/dokumen) dengan caption perintah untuk set media juga.\n\nVariabel: @user @group @time @date @greeting\n\n─────────────────\nSaat ini: {current}\nMedia   : {hasMedia}"
+setgoodbye_media_success: "Pesan dan media goodbye berhasil diatur."
+setgoodbye_media_fail: "Gagal menyimpan media goodbye. Pesan teks tetap tersimpan jika diisi."
+setgoodbye_success: "Pesan goodbye berhasil diatur."
+
+broadcast_usage: "*Broadcast Grup*\n\nGunakan: {prefix}broadcast <pesan>\n\nContoh:\n{prefix}broadcast Halo, bot sedang maintenance selama 1 jam."
+broadcast_no_groups: "Bot belum tergabung di grup mana pun."
+broadcast_starting: "Memulai broadcast ke {count} grup.\n_Proses ini mungkin memakan waktu._"
+broadcast_done: "*Broadcast Selesai!*\n\nBerhasil: {success} grup\nGagal: {failed} grup"
+broadcast_error: "Terjadi kesalahan saat menjalankan broadcast."
+
+join_usage: "Kirim link grup.\n\nContoh: .join https://chat.whatsapp.com/xxxxx"
+join_invalid: "Link grup tidak valid."
+join_success: "Berhasil join ke grup: {id}"
+join_already: "Bot sudah berada di grup tersebut."
+join_fail: "Gagal join grup: {err}"
+
+brat_usage: "Silakan masukkan teksnya! Contoh: *!brat Halo semuanya* atau *!brat Halo --bg #ff0000 --color #ffffff*"
+
+dl_usage: "*DOWNLOAD — Media Downloader*\n\n{prefix}dl <url>\n\nPlatform:\n• TikTok (video & slide)\n• Twitter / X\n• Instagram (Post, Reel, Story)\n• Facebook (Video, Reel)\n• YouTube"
+dl_invalid_url: "URL tidak valid atau platform tidak didukung."
+dl_not_found: "Media tidak ditemukan atau format tidak didukung."
+dl_skipped: "{count} gambar lainnya dilewati."
+dl_api_error: "Gagal mengunduh ({code})."
+dl_timeout: "Download timeout, coba lagi nanti."
+dl_file_too_large: "File terlalu besar."
+dl_server_error: "Gagal terhubung ke server."
+
+groupinfo_fail: "Gagal mengambil informasi grup."
+
+linkgc_not_admin: "Bot harus menjadi admin grup untuk mengambil link."
+linkgc_success: "*Link Grup:*\n\n{link}"
+linkgc_fail: "Gagal mengambil link grup. Pastikan bot adalah admin."
+
+view_no_reply: "Reply pesan foto/video sekali lihat untuk mengirim ulang."
+view_not_viewonce: "Pesan yang di-reply bukan foto/video sekali lihat."
+view_unsupported: "Format media tidak didukung."
+view_fail: "Gagal mengambil media. Pastikan pesannya belum kadaluarsa."
+
+cmd_desc_antilink: "Atur mode antilink grup (kick/delete/off)"
+cmd_desc_badword: "Atur daftar kata kotor yang diblokir di grup"
+cmd_desc_kick: "Mengeluarkan member dari grup"
+cmd_desc_promote: "Jadikan member sebagai admin"
+cmd_desc_demote: "Turunkan admin menjadi member biasa"
+cmd_desc_setclose: "Atur pesan kustom saat grup di-lock/unlock"
+cmd_desc_tagall: "Tag semua member grup"
+cmd_desc_giveaway: "Buat dan kelola giveaway di grup"
+cmd_desc_welcome: "Aktifkan atau matikan pesan welcome"
+cmd_desc_goodbye: "Aktifkan atau matikan pesan goodbye"
+cmd_desc_setwelcome: "Atur template pesan welcome (bisa gambar)"
+cmd_desc_setgoodbye: "Atur template pesan goodbye (bisa gambar)"
+cmd_desc_broadcast: "Kirim pesan broadcast ke semua grup"
+cmd_desc_join: "Bot join ke grup via link undangan"
+cmd_desc_uptime: "Cek sudah berapa lama bot berjalan"
+cmd_desc_brat: "Buat stiker teks ala brat"
+cmd_desc_download: "Download media dari TikTok, Instagram, YouTube, FB, Twitter/X"
+cmd_desc_groupinfo: "Lihat informasi lengkap grup"
+cmd_desc_linkgc: "Ambil link undangan grup ini"
+cmd_desc_view: "Kirim ulang media sekali lihat"
+cmd_desc_sticker: "Ubah gambar/video menjadi stiker"
+cmd_desc_ping: "Cek respon latensi bot"
+cmd_desc_menu: "Tampilkan menu daftar perintah"
+cmd_desc_lang: "Setel bahasa respon bot untuk grup ini"
+only_admin: "Hanya Admin"
+all_members: "Semua Member"
+welcome_status: "*Welcome Message*\n\nStatus: *{status}*\n\n� *{prefix}welcome on*\n� *{prefix}welcome off*"
+goodbye_status: "*Goodbye Message*\n\nStatus: *{status}*\n\n� *{prefix}goodbye on*\n� *{prefix}goodbye off*"
+giveaway_end_first: "{giveaway_active}\nAkhiri dulu dengan {prefix}giveaway end"
+prefix_status: "{current_prefix} {currentPrefix} ({statusLabel})\n\nPenggunaan:\n� *{prefix}setprefix <prefix_baru>* � Ubah prefix\n� *{prefix}setprefix reset* � Kembalikan ke default"
+brat_server_busy: "{fail_process} (Mungkin server apinya lagi sibuk)."

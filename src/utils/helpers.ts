@@ -33,6 +33,9 @@ export function replaceVariables(
         restrict?: string;
         creationDate?: string;
         tag?: string;
+        desc?: string;
+        uptime?: string;
+        startTime?: string;
     }
 ): string {
     const now = new Date();
@@ -53,5 +56,8 @@ export function replaceVariables(
         .replace(/@adminList/gi, vars.adminList || '-')
         .replace(/@announce/gi, vars.announce || '-')
         .replace(/@restrict/gi, vars.restrict || '-')
-        .replace(/@creationDate/gi, vars.creationDate || '-');
+        .replace(/@creationDate/gi, vars.creationDate || '-')
+        .replace(/@desc/gi, vars.desc || '-')
+        .replace(/@uptime/gi, vars.uptime || '-')
+        .replace(/@startTime/gi, vars.startTime || '-');
 }

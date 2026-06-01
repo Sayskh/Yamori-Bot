@@ -1,0 +1,234 @@
+group_only: "This command can only be used in groups."
+dev_only: "This command is only for developer."
+admin_only: "This command is only for group admins."
+user_only: "This command is only for regular users."
+not_admin: "Bot is not a group admin."
+success: "Success"
+failed: "Failed"
+user_not_found: "User not found."
+mention_or_reply: "Mention or reply to the user you want to process."
+invalid_number: "Invalid phone number."
+privacy_setting: "Failed to add member due to privacy settings."
+left_recently: "Failed to add member because they left recently."
+already_member: "Already a member."
+pinging: "Pinging..."
+pong: "Pong!"
+no_media: "Reply to a picture, video, or sticker."
+fail_process: "Failed to process."
+current_prefix: "Current prefix:"
+prefix_default: "Already using default prefix."
+menu_load_fail: "Failed to load command list."
+command_not_found: "Command {cmd} not found."
+no_desc: "No description"
+aliases: "Aliases"
+usage: "Usage"
+access: "Access"
+antilink_kick: "Deleted message and kicked @user for sending a link."
+invalid_usage: "Invalid command usage."
+badword_added: "Badword successfully added."
+badword_removed: "Badword successfully removed."
+badword_empty: "Badword list is empty in this group."
+badword_list: "Badword list in this group:"
+already_lock: "Group is already locked."
+already_unlock: "Group is already unlocked."
+welcome_enabled: "Welcome message successfully enabled."
+welcome_disabled: "Welcome message successfully disabled."
+goodbye_enabled: "Goodbye message successfully enabled."
+goodbye_disabled: "Goodbye message successfully disabled."
+giveaway_usage: "Invalid format. Example: .giveaway 5m 1 Reward"
+giveaway_limit: "Minimum duration is 1 minute and minimum winners count is 1."
+giveaway_active: "There is already an active giveaway in this group."
+giveaway_not_active: "There is no active giveaway in this group."
+giveaway_no_ended: "No ended giveaway found."
+giveaway_no_participants: "No participants for reroll."
+giveaway_limit: "Duration must be between 10 seconds and 7 days."
+giveaway_winners_limit: "Winners count must be between 1 and 20."
+giveaway_usage_header: "Invalid usage. Please use:\n{prefix}giveaway <duration> <winner> <prize>"
+broadcast_usage: "Please provide a broadcast message."
+add_usage: "Please provide phone number(s).\n\nExamples:\n• Single: .add 628xxx\n• Multiple: .add 628xxx 1234567\n• With country code: .add +62812345"
+add_result: "Add Result"
+add_success: "Success"
+add_already_member: "Already Member"
+add_failed: "Failed"
+add_fail_process: "Failed to add members. Ensure the bot is an admin."
+user_not_admin: "User is not an admin."
+user_already_admin: "User is already an admin."
+fail_privileges: "Failed. Bot needs admin privileges."
+prefix_usage: "Usage: {prefix}setprefix <new_prefix>\nReset: {prefix}setprefix reset"
+prefix_reset: "Prefix reset to default: {prefix}"
+prefix_limit: "Prefix must be 3 characters or less."
+prefix_already: "Already using prefix: {prefix}"
+prefix_changed: "Prefix changed to: {prefix}"
+gc_usage: "Use:\n• *{prefix}gc close* — Lock group\n• *{prefix}gc open* — Open group"
+fail_bot_admin: "Failed to change settings. Bot needs admin privileges."
+already_lock: "Group is already locked."
+already_unlock: "Group is already unlocked."
+giveaway_start_announcement: |
+  *GIVEAWAY*
+
+  Prize: {prize}
+  Winners: {winnersCount}
+  Ends: {endTime} WIB
+
+  React {emoji} on this message to participate
+
+  Host: @{host}
+giveaway_end_no_participants: |
+  *GIVEAWAY ENDED*
+
+  Prize: {prize}
+
+  No participants.
+
+  Host: @{host}
+giveaway_end_announcement: |
+  *GIVEAWAY ENDED*
+
+  Prize: {prize}
+
+  *Winners:*
+  {winners}
+
+  Total Participants: {participantsCount}
+  Host: @{host}
+giveaway_reroll_announcement: |
+  *GIVEAWAY REROLL*
+
+  Prize: {prize}
+
+  *New Winners:*
+  {winners}
+
+lang_current: "*Group Language*\n\nCurrent language: *{lang}*\n\nChange language:\n• *{prefix}lang en* (English)\n• *{prefix}lang id* (Indonesian)"
+lang_changed: "Group language successfully changed to: *{lang}*"
+lang_invalid: "Unsupported language. Choose *en* or *id*."
+
+antilink_usage: "*Antilink Mode*\n\nChoose mode:\n• {prefix}antilink kick (Delete link & Kick)\n• {prefix}antilink delete (Delete link only)\n• {prefix}antilink off (Turn off)\n\nCurrently: *{current}*"
+antilink_success: "Antilink successfully set to mode: *{mode}*."
+
+badword_usage: "*Badword Settings*\n\nUse this feature to block specific words in the group.\n\n1. *{prefix}badword add <word1> <word2>...*\n2. *{prefix}badword del <word1> <word2>...*\n3. *{prefix}badword list*\n\nExample: {prefix}badword add stupid ugly"
+badword_add_empty: "Please specify the word(s) to block.\nExample: *{prefix}badword add stupid ugly*"
+badword_added_count: "Successfully added {count} word(s) to the badword list."
+badword_del_empty: "Please specify the word(s) to remove.\nExample: *{prefix}badword del stupid*"
+badword_removed_count: "Successfully removed {count} word(s) from the badword list."
+badword_empty_list: "This group does not have a badword list yet."
+badword_list_header: "*Group Badword List:*\n\n{list}"
+badword_unknown_sub: "Unknown subcommand. Use *add*, *del*, or *list*."
+
+kick_no_target: "Tag or reply to the message of the person you want to kick."
+kick_fail: "Failed to kick member. Ensure the bot is a group admin."
+
+setlock_usage: "*Lock/Unlock Messages*\n\n{prefix}setclose lock <message>\n{prefix}setclose unlock <message>\n{prefix}setclose lock off\n{prefix}setclose unlock off\n\nExample:\n{prefix}setclose lock Group locked. Please wait.\n\nVariables: @user @group @time @date @greeting\n\n─────────────────\nLock: {lock}\nUnlock: {unlock}"
+setlock_invalid_type: "Choose type: *lock* or *unlock*\n\nExample: *{prefix}setclose lock Group is currently locked*"
+setlock_empty_msg: "Please write a message after the type.\n\nExample: *{prefix}setclose {type} Custom message*"
+setlock_reset: "Message {type} successfully reset to default."
+setlock_success: "Message *{type}* successfully set.\n\nPreview:\n{message}"
+
+everyone_attention: "*Attention Everyone!*"
+everyone_announce: "*Announcement*\n\n{message}"
+
+giveaway_info_header: |
+  *GIVEAWAY INFO*
+
+  • *Prize:* {prize}
+  • *Winners:* {winnersCount}
+  • *Participants:* {participantsCount}
+  • *Ends:* {endTime} WIB
+  • *Remaining:* {remaining}
+  • *Host:* @{host}
+giveaway_usage_block: |
+  *Invalid format.* Please use:
+  {prefix}giveaway <duration> <winner> <prize>
+
+  *Create:* {prefix}giveaway <duration> <winner> <prize>
+  *Example:* {prefix}giveaway 30m 1 iPhone 16 Pro
+
+  *Duration:* 30s, 5m, 1h, 1d
+  *Winner:* Winners count (number)
+
+  *Subcommands:*
+  › {prefix}giveaway end — End giveaway
+  › {prefix}giveaway reroll — Reroll winners
+  › {prefix}giveaway info — Active giveaway info
+
+time_day: "{value} days"
+time_hour: "{value} hours"
+time_minute: "{value} minutes"
+time_second: "{value} seconds"
+time_ended: "Ended"
+
+setwelcome_usage: "*Welcome Message*\n\n{prefix}setwelcome <message>\nUse {prefix}welcome (on/off) to enable/disable.\n\nExample:\n{prefix}setwelcome Hello @user! Welcome to @group\n\nSend/Reply to media (image/video/document) with command caption to set media too.\n\nVariables: @user @group @time @date @greeting\n\n─────────────────\nCurrently: {current}\nMedia    : {hasMedia}"
+setwelcome_media_success: "Welcome message and media successfully set."
+setwelcome_media_fail: "Failed to save welcome media. Text message is still saved if provided."
+setwelcome_success: "Welcome message successfully set."
+
+setgoodbye_usage: "*Goodbye Message*\n\n{prefix}setgoodbye <message>\nUse {prefix}goodbye (on/off) to enable/disable.\n\nExample:\n{prefix}setgoodbye Goodbye @user\n\nSend/Reply to media (image/video/document) with command caption to set media too.\n\nVariables: @user @group @time @date @greeting\n\n─────────────────\nCurrently: {current}\nMedia    : {hasMedia}"
+setgoodbye_media_success: "Goodbye message and media successfully set."
+setgoodbye_media_fail: "Failed to save goodbye media. Text message is still saved if provided."
+setgoodbye_success: "Goodbye message successfully set."
+
+broadcast_usage: "*Group Broadcast*\n\nUse: {prefix}broadcast <message>\n\nExample:\n{prefix}broadcast Hello, the bot is undergoing maintenance for 1 hour."
+broadcast_no_groups: "The bot is not in any groups yet."
+broadcast_starting: "Starting broadcast to {count} groups.\n_This process may take some time._"
+broadcast_done: "*Broadcast Completed!*\n\nSuccess: {success} groups\nFailed: {failed} groups"
+broadcast_error: "An error occurred while broadcasting."
+
+join_usage: "Please send a group invite link.\n\nExample: .join https://chat.whatsapp.com/xxxxx"
+join_invalid: "Invalid group link."
+join_success: "Successfully joined group: {id}"
+join_already: "The bot is already in that group."
+join_fail: "Failed to join group: {err}"
+
+brat_usage: "Please enter some text! Example: *!brat Hello everyone* or *!brat Hello --bg #ff0000 --color #ffffff*"
+
+dl_usage: "*DOWNLOAD — Media Downloader*\n\n{prefix}dl <url>\n\nPlatforms:\n• TikTok (video & slide)\n• Twitter / X\n• Instagram (Post, Reel, Story)\n• Facebook (Video, Reel)\n• YouTube"
+dl_invalid_url: "Invalid URL or unsupported platform."
+dl_not_found: "Media not found or unsupported format."
+dl_skipped: "{count} other images skipped."
+dl_api_error: "Failed to download ({code})."
+dl_timeout: "Download timed out, please try again later."
+dl_file_too_large: "File is too large."
+dl_server_error: "Failed to connect to the server."
+
+groupinfo_fail: "Failed to retrieve group information."
+
+linkgc_not_admin: "The bot must be a group admin to get the link."
+linkgc_success: "*Group Link:*\n\n{link}"
+linkgc_fail: "Failed to get group link. Ensure the bot is an admin."
+
+view_no_reply: "Reply to a view-once photo/video to resend it."
+view_not_viewonce: "The replied message is not a view-once photo/video."
+view_unsupported: "Unsupported media format."
+view_fail: "Failed to retrieve media. Ensure the message has not expired."
+
+cmd_desc_antilink: "Configure group antilink mode (kick/delete/off)"
+cmd_desc_badword: "Manage group blocked badwords list"
+cmd_desc_kick: "Kick a member from the group"
+cmd_desc_promote: "Promote a member to group admin"
+cmd_desc_demote: "Demote an admin to regular member"
+cmd_desc_setclose: "Set custom lock/unlock messages for the group"
+cmd_desc_tagall: "Tag all group members"
+cmd_desc_giveaway: "Create and manage group giveaways"
+cmd_desc_welcome: "Enable or disable welcome messages"
+cmd_desc_goodbye: "Enable or disable goodbye messages"
+cmd_desc_setwelcome: "Set welcome template message (supports media)"
+cmd_desc_setgoodbye: "Set goodbye template message (supports media)"
+cmd_desc_broadcast: "Broadcast a message to all joined groups"
+cmd_desc_join: "Join a group via invite link"
+cmd_desc_uptime: "Check bot's current online duration"
+cmd_desc_brat: "Generate a brat-style text sticker"
+cmd_desc_download: "Download media from TikTok, Instagram, YouTube, FB, Twitter/X"
+cmd_desc_groupinfo: "View group metadata and admins list"
+cmd_desc_linkgc: "Get the invite link for this group"
+cmd_desc_view: "Retrieve and resend a view-once media message"
+cmd_desc_sticker: "Convert images/videos/stickers to sticker format"
+cmd_desc_ping: "Check bot response latency"
+cmd_desc_menu: "Display the commands catalog"
+cmd_desc_lang: "Change the response language for this group"
+only_admin: "Only Admins"
+all_members: "All Members"
+welcome_status: "*Welcome Message*\n\nStatus: *{status}*\n\n� *{prefix}welcome on*\n� *{prefix}welcome off*"
+goodbye_status: "*Goodbye Message*\n\nStatus: *{status}*\n\n� *{prefix}goodbye on*\n� *{prefix}goodbye off*"
+giveaway_end_first: "{giveaway_active}\nEnd it first with {prefix}giveaway end"
+prefix_status: "{current_prefix} {currentPrefix} ({statusLabel})\n\nUsage:\n� *{prefix}setprefix <new_prefix>* � Change prefix\n� *{prefix}setprefix reset* � Reset to default"
+brat_server_busy: "{fail_process} (API server might be busy)."
