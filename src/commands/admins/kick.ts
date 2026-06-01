@@ -1,14 +1,14 @@
 import { Command } from '../../types/Command';
+import { getAdminConfig } from '../../core/configLoader';
 
 const command: Command = {
     name: 'kick',
-    aliases: ['tendang', 'keluarkan'],
-    description: 'Mengeluarkan member dari grup',
-    usage: '@tag / balas pesan',
+    description: 'Kick member from group',
+    usage: '@tag / reply to message',
     groupAdminOnly: true,
 
     async execute(sock, msg, args, context) {
-        const { from } = context;
+        const { from, t } = context;
 
         let targetJid: string | null = null;
 
@@ -23,18 +23,17 @@ const command: Command = {
         }
 
         if (!targetJid) {
-            return sock.sendMessage(from, { text: 'Tag at balas pesan orang yang ingin di-kick.' }, { quoted: msg });
+            return sock.sendMessage(from, { text: t('kick_no_target') }, { quoted: msg });
         }
 
         try {
             await sock.groupParticipantsUpdate(from, [targetJid], 'remove');
-            const { getAdminConfig } = require('../../core/configLoader');
             const template = getAdminConfig().kick_template;
             const text = template.replace(/@user/gi, `@${targetJid.split('@')[0]}`);
 
             await sock.sendMessage(from, { text, mentions: [targetJid] }, { quoted: msg });
         } catch (e) {
-            await sock.sendMessage(from, { text: 'Gagal mengeluarkan member. Pastikan bot adalah admin grup.' }, { quoted: msg });
+            await sock.sendMessage(from, { text: t('kick_fail') }, { quoted: msg });
         }
     },
 };

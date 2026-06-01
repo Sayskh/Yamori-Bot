@@ -1,33 +1,27 @@
 import { Command } from '../../types/Command';
 import log from '../../utils/logger';
+import { t } from '../../utils/lang';
 
 const command: Command = {
     name: 'add',
-    description: 'Tambah member ke grup',
-    usage: '<nomor> [nomor2 ...]',
+    description: 'Add member to group',
+    usage: '<number> [number2 ...]',
     groupAdminOnly: true,
     async execute(sock, msg, args, context) {
         const from = msg.key.remoteJid!;
         const isGroup = from.endsWith('@g.us');
 
         if (!isGroup) {
-            await sock.sendMessage(from, { text: 'This command can only be used in groups.' });
+            await sock.sendMessage(from, { text: t('group_only') });
             return;
         }
 
         if (args.length === 0) {
-            await sock.sendMessage(from, {
-                text: 'Please provide phone number(s).\n\n' +
-                    'Examples:\n' +
-                    '• Single: .add 628xxx\n' +
-                    '• Multiple: .add 628xxx 1234567\n' +
-                    '• With country code: .add +62812345'
-            });
+            await sock.sendMessage(from, { text: t('add_usage') });
             return;
         }
 
         try {
-            // Get group metadata
             const groupMetadata = await sock.groupMetadata(from);
             const participants = groupMetadata.participants;
 
@@ -37,21 +31,18 @@ const command: Command = {
                 alreadyMember: [] as string[]
             };
 
-            // Process each phone number
             for (const arg of args) {
                 try {
-                    // Format phone number
                     let phoneNumber = arg.replace(/[^0-9]/g, '');
 
                     if (phoneNumber.length < 8) {
                         results.failed.push({
                             number: phoneNumber,
-                            reason: 'Invalid number'
+                            reason: t('invalid_number')
                         });
                         continue;
                     }
 
-                    // Default to ID (62) if no country code likely
                     if (phoneNumber.length <= 10 && !phoneNumber.match(/^(1|7|2[0-9]|3[0-9]|4[0-9]|5[0-9]|6[0-9]|8[0-9]|9[0-9])/)) {
                         phoneNumber = '62' + phoneNumber;
                     }
@@ -67,9 +58,9 @@ const command: Command = {
                     const response = await sock.groupParticipantsUpdate(from, [userJid], 'add');
 
                     if (response[0]?.status === '403') {
-                        results.failed.push({ number: phoneNumber, reason: 'Privacy settings' });
+                        results.failed.push({ number: phoneNumber, reason: t('privacy_setting') });
                     } else if (response[0]?.status === '408') {
-                        results.failed.push({ number: phoneNumber, reason: 'Left recently' });
+                        results.failed.push({ number: phoneNumber, reason: t('left_recently') });
                     } else if (response[0]?.status === '409') {
                         results.alreadyMember.push(phoneNumber);
                     } else {
@@ -77,26 +68,26 @@ const command: Command = {
                     }
 
                 } catch (err) {
-                    results.failed.push({ number: arg, reason: 'Error' });
+                    results.failed.push({ number: arg, reason: t('failed') });
                 }
             }
 
-            let responseText = 'Add Result\n\n';
+            let responseText = `${t('add_result')}\n\n`;
 
             if (results.success.length > 0) {
-                responseText += `Success (${results.success.length}):\n`;
+                responseText += `${t('add_success')} (${results.success.length}):\n`;
                 results.success.forEach(num => responseText += `• @${num}\n`);
                 responseText += '\n';
             }
 
             if (results.alreadyMember.length > 0) {
-                responseText += `Already Member (${results.alreadyMember.length}):\n`;
+                responseText += `${t('add_already_member')} (${results.alreadyMember.length}):\n`;
                 results.alreadyMember.forEach(num => responseText += `• ${num}\n`);
                 responseText += '\n';
             }
 
             if (results.failed.length > 0) {
-                responseText += `Failed (${results.failed.length}):\n`;
+                responseText += `${t('add_failed')} (${results.failed.length}):\n`;
                 results.failed.forEach(item => responseText += `• ${item.number} - ${item.reason}\n`);
             }
 
@@ -109,9 +100,7 @@ const command: Command = {
 
         } catch (error) {
             log.error({ err: error }, 'Add command error');
-            await sock.sendMessage(from, {
-                text: 'Failed to add members. Ensure the bot is an admin.'
-            });
+            await sock.sendMessage(from, { text: t('add_fail_process') });
         }
     }
 };

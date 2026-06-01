@@ -2,10 +2,10 @@
 
 # 🦎 Yamori WhatsApp Bot
 
-![Node.js](https://img.shields.io/badge/Node.js-≥20.0.0-339933?style=for-the-badge&logo=node.js&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
-![Baileys](https://img.shields.io/badge/Baileys-WhatsApp%20Web%20API-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
+![Node.js](https://img.shields.io/badge/Node.js-≥20.0.0-339933?logo=node.js&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+![Baileys](https://img.shields.io/badge/Baileys-WhatsApp%20Web%20API-25D366?logo=whatsapp&logoColor=white)
+![License](https://img.shields.io/github/license/Sayskh/Yamori-Bot)
 
 **High-performance, multi-session WhatsApp bot** built on [Baileys](https://github.com/WhiskeySockets/Baileys).
 
@@ -31,8 +31,8 @@ multi-session handling yang efisien untuk banyak bot, dan CLI dashboard.
 
 ## Requirements
 
-- ![Node.js](https://img.shields.io/badge/Node.js-≥20.0.0-339933?style=flat-square&logo=node.js&logoColor=white) 
-- ![FFmpeg](https://img.shields.io/badge/FFmpeg-required-007808?style=flat-square&logo=ffmpeg&logoColor=white) untuk media processing & sticker conversion
+- ![Node.js](https://img.shields.io/badge/Node.js-≥20.0.0-339933?logo=node.js&logoColor=white) 
+- ![FFmpeg](https://img.shields.io/badge/FFmpeg-required-007808?logo=ffmpeg&logoColor=white) untuk media processing & sticker conversion
 
 ## Installation
 

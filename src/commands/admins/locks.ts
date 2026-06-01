@@ -1,21 +1,21 @@
 import { Command } from '../../types/Command';
 import { replaceVariables } from '../../utils/helpers';
-
+import { getAdminConfig } from '../../core/configLoader';
 const command: Command = {
     name: 'groupchat',
     aliases: ['gc'],
-    description: 'Lock/Unlock group chat. Gunakan: .gc close / .gc open',
+    description: 'Lock/Unlock group chat. Usage: .gc close / .gc open',
     usage: '<close/open>',
     groupAdminOnly: true,
     async execute(sock, msg, args, context) {
-        const { from, dataManager, pushname, groupName, prefix, botId } = context;
-        if (!from.endsWith('@g.us')) return sock.sendMessage(from, { text: '⚠️ Perintah ini hanya bisa digunakan di grup.' });
+        const { from, dataManager, pushname, groupName, prefix, botId, t } = context;
+        if (!from.endsWith('@g.us')) return sock.sendMessage(from, { text: t('group_only') });
 
         const action = args[0]?.toLowerCase();
 
         if (!action || (action !== 'close' && action !== 'open')) {
             await sock.sendMessage(from, {
-                text: `⚠️ Gunakan:\n• *${prefix}gc close* — Kunci grup\n• *${prefix}gc open* — Buka grup`,
+                text: t('gc_usage', { prefix }),
             }, { quoted: msg });
             return;
         }
@@ -28,7 +28,6 @@ const command: Command = {
             if (isLock) {
                 await sock.groupSettingUpdate(from, 'announcement');
 
-                const { getAdminConfig } = require('../../core/configLoader');
                 const adminCfg = getAdminConfig();
 
                 const text = settings.lock
@@ -39,7 +38,6 @@ const command: Command = {
             } else {
                 await sock.groupSettingUpdate(from, 'not_announcement');
 
-                const { getAdminConfig } = require('../../core/configLoader');
                 const adminCfg = getAdminConfig();
 
                 const text = settings.unlock
@@ -49,7 +47,7 @@ const command: Command = {
                 await sock.sendMessage(from, { text });
             }
         } catch (error) {
-            await sock.sendMessage(from, { text: '❌ Gagal mengubah pengaturan. Bot perlu hak admin.' });
+            await sock.sendMessage(from, { text: t('fail_bot_admin') });
         }
     }
 };

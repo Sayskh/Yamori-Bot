@@ -1,13 +1,14 @@
 import { Command } from '../../types/Command';
+import { getAdminConfig } from '../../core/configLoader';
 
 const command: Command = {
     name: 'demote',
-    description: 'Turunkan admin menjadi member',
+    description: 'Demote admin to member',
     usage: '@mention / reply',
     groupAdminOnly: true,
     async execute(sock, msg, args, context) {
-        const from = msg.key.remoteJid!;
-        if (!from.endsWith('@g.us')) return sock.sendMessage(from, { text: 'This command can only be used in groups.' });
+        const { from, t } = context;
+        if (!from.endsWith('@g.us')) return sock.sendMessage(from, { text: t('group_only') });
 
         try {
             const groupMetadata = await sock.groupMetadata(from);
@@ -20,16 +21,15 @@ const command: Command = {
             } else if (msg.message?.extendedTextMessage?.contextInfo?.participant) {
                 targetUser = msg.message.extendedTextMessage.contextInfo.participant;
             } else {
-                return sock.sendMessage(from, { text: 'Mention user or reply to their message.' });
+                return sock.sendMessage(from, { text: t('mention_or_reply') });
             }
 
             const targetParticipant = participants.find((p: any) => p.id === targetUser);
-            if (!targetParticipant) return sock.sendMessage(from, { text: 'User not found.' });
-            if (!targetParticipant.admin) return sock.sendMessage(from, { text: 'User is not an admin.' });
+            if (!targetParticipant) return sock.sendMessage(from, { text: t('user_not_found') });
+            if (!targetParticipant.admin) return sock.sendMessage(from, { text: t('user_not_admin') });
 
             await sock.groupParticipantsUpdate(from, [targetUser], 'demote');
 
-            const { getAdminConfig } = require('../../core/configLoader');
             const template = getAdminConfig().demote_template;
             const text = template.replace(/@user/gi, `@${targetUser.split('@')[0]}`);
 
@@ -39,7 +39,7 @@ const command: Command = {
             });
 
         } catch (error) {
-            await sock.sendMessage(from, { text: 'Failed to demote. Bot needs admin privileges.' });
+            await sock.sendMessage(from, { text: t('fail_privileges') });
         }
     }
 };

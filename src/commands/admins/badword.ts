@@ -3,20 +3,15 @@ import { Command } from '../../types/Command';
 const command: Command = {
     name: 'badword',
     aliases: ['bw'],
-    description: 'Mengatur daftar kata kotor (badwords) grup',
-    usage: 'add/del/list <kata>',
+    description: 'Manage group badwords list',
+    usage: 'add/del/list <word>',
     groupAdminOnly: true,
     async execute(sock, msg, args, context) {
-        const { from, prefix, dataManager, botId } = context;
+        const { from, prefix, dataManager, botId, t } = context;
 
         if (args.length === 0) {
             await sock.sendMessage(from, {
-                text: `*Pengaturan Badword*\n\n` +
-                    `Gunakan fitur ini untuk memblokir kata-kata tertentu di grup.\n\n` +
-                    `1. *${prefix}badword add <kata1> <kata2>...*\n` +
-                    `2. *${prefix}badword del <kata1> <kata2>...*\n` +
-                    `3. *${prefix}badword list*\n\n` +
-                    `Contoh: ${prefix}badword add anjing babi`
+                text: t('badword_usage', { prefix })
             }, { quoted: msg });
             return;
         }
@@ -28,7 +23,7 @@ const command: Command = {
 
         if (subCommand === 'add') {
             if (words.length === 0) {
-                await sock.sendMessage(from, { text: `Sebutkan kata yang mau diblokir.\nContoh: *${prefix}badword add bodoh jelek*` }, { quoted: msg });
+                await sock.sendMessage(from, { text: t('badword_add_empty', { prefix }) }, { quoted: msg });
                 return;
             }
 
@@ -36,11 +31,11 @@ const command: Command = {
                 await db.addBadword(botId, from, word);
             }
 
-            await sock.sendMessage(from, { text: `Berhasil menambahkan ${words.length} kata ke daftar badword.` }, { quoted: msg });
+            await sock.sendMessage(from, { text: t('badword_added_count', { count: words.length.toString() }) }, { quoted: msg });
         }
         else if (subCommand === 'del' || subCommand === 'delete' || subCommand === 'remove') {
             if (words.length === 0) {
-                await sock.sendMessage(from, { text: `Sebutkan kata yang mau dihapus.\nContoh: *${prefix}badword del bodoh*` }, { quoted: msg });
+                await sock.sendMessage(from, { text: t('badword_del_empty', { prefix }) }, { quoted: msg });
                 return;
             }
 
@@ -48,18 +43,19 @@ const command: Command = {
                 await db.removeBadword(botId, from, word);
             }
 
-            await sock.sendMessage(from, { text: `Berhasil menghapus ${words.length} kata dari daftar badword.` }, { quoted: msg });
+            await sock.sendMessage(from, { text: t('badword_removed_count', { count: words.length.toString() }) }, { quoted: msg });
         }
         else if (subCommand === 'list') {
             const list = await db.getBadwords(botId, from);
             if (list.length === 0) {
-                await sock.sendMessage(from, { text: `Grup ini belum memiliki daftar badword.` }, { quoted: msg });
+                await sock.sendMessage(from, { text: t('badword_empty_list') }, { quoted: msg });
             } else {
-                await sock.sendMessage(from, { text: `*Daftar Badword Grup:*\n\n${list.map((w, i) => `${i + 1}. ${w}`).join('\n')}` }, { quoted: msg });
+                const listText = list.map((w, i) => `${i + 1}. ${w}`).join('\n');
+                await sock.sendMessage(from, { text: t('badword_list_header', { list: listText }) }, { quoted: msg });
             }
         }
         else {
-            await sock.sendMessage(from, { text: `Sub-perintah tidak dikenal. Gunakan *add*, *del*, atau *list*.` }, { quoted: msg });
+            await sock.sendMessage(from, { text: t('badword_unknown_sub') }, { quoted: msg });
         }
     }
 };

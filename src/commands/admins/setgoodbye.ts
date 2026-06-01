@@ -4,33 +4,31 @@ import fs from 'fs';
 
 const command: Command = {
     name: 'setgoodbye',
-    description: 'Atur pesan member keluar (bisa dengan gambar)',
-    usage: '<pesan> [dengan lampiran/reply gambar]',
+    description: 'Set custom goodbye message (supports image/video)',
+    usage: '<message> [with attachment or replied image/video]',
     groupAdminOnly: true,
 
     async execute(sock, msg, args, context) {
-        const { from, prefix, dataManager, botId } = context;
+        const { from, prefix, dataManager, botId, t } = context;
         const db = dataManager.db;
         const message = args.join(' ');
 
-        // Check for attached or quoted image
-        const hasMedia = msg.message?.imageMessage ||
-            msg.message?.extendedTextMessage?.contextInfo?.quotedMessage?.imageMessage;
+        const getMedia = (m: any) => {
+            if (!m) return null;
+            return m.imageMessage || m.videoMessage || m.documentMessage;
+        };
+
+        const hasMedia = !!(getMedia(msg.message) || getMedia(msg.message?.extendedTextMessage?.contextInfo?.quotedMessage));
 
         if (!message && !hasMedia) {
             const settings = await db.getGroupSettings(botId, from);
 
             await sock.sendMessage(from, {
-                text: `*Pesan Member Keluar*\n\n`
-                    + `${prefix}setgoodbye <pesan>\n`
-                    + `Gunakan ${prefix}goodbye (on/off) untuk menghidupkan/mematikan.\n\n`
-                    + `Contoh:\n`
-                    + `${prefix}setgoodbye Selamat tinggal @user\n\n`
-                    + `Kirim/Balas gambar dengan caption perintah untuk set gambar juga.\n\n`
-                    + `Variabel: @user @group @time @date @greeting\n\n`
-                    + `─────────────────\n`
-                    + `Saat ini: ${settings.goodbye || '_(belum diatur)_'}\n`
-                    + `Gambar : ${settings.goodbyeImage ? 'Ya' : 'Tidak'}`,
+                text: t('setgoodbye_usage', {
+                    prefix,
+                    current: settings.goodbye || '_(default)_',
+                    hasMedia: settings.goodbyeImage ? 'Yes' : 'No'
+                }),
             }, { quoted: msg });
             return;
         }
@@ -40,12 +38,12 @@ const command: Command = {
         }
 
         if (hasMedia) {
-            // Save media
             let mediaMsg = msg;
-            if (msg.message?.extendedTextMessage?.contextInfo?.quotedMessage?.imageMessage) {
+            const contextInfo = msg.message?.extendedTextMessage?.contextInfo;
+            if (getMedia(contextInfo?.quotedMessage)) {
                 mediaMsg = {
-                    key: { remoteJid: from, id: msg.message.extendedTextMessage.contextInfo.stanzaId },
-                    message: msg.message.extendedTextMessage.contextInfo.quotedMessage
+                    key: { remoteJid: from, id: contextInfo?.stanzaId },
+                    message: contextInfo?.quotedMessage
                 } as any;
             }
 
@@ -58,15 +56,14 @@ const command: Command = {
                 }
 
                 await db.setGoodbyeImage(botId, from, filePath);
-                await sock.sendMessage(from, { text: 'Pesan dan gambar goodbye berhasil diatur.' }, { quoted: msg });
+                await sock.sendMessage(from, { text: t('setgoodbye_media_success') }, { quoted: msg });
                 return;
             } else {
-                await sock.sendMessage(from, { text: 'Gagal meresave gambar goodbye. Pesan teks tetap tersimpan jika diisi.' }, { quoted: msg });
+                await sock.sendMessage(from, { text: t('setgoodbye_media_fail') }, { quoted: msg });
             }
         } else {
-            // If they are just setting text
             await sock.sendMessage(from, {
-                text: 'Pesan goodbye berhasil diatur.',
+                text: t('setgoodbye_success'),
             }, { quoted: msg });
         }
     },

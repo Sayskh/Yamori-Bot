@@ -3,29 +3,23 @@ import { Command } from '../../types/Command';
 const command: Command = {
     name: 'setclose',
     aliases: ['setgc'],
-    description: 'Atur pesan custom saat grup di-lock/unlock',
-    usage: 'lock <pesan> / unlock <pesan>',
+    description: 'Set custom message for group lock/unlock',
+    usage: 'lock <message> / unlock <message>',
     groupAdminOnly: true,
 
     async execute(sock, msg, args, context) {
-        const { from, prefix, dataManager, botId } = context;
+        const { from, prefix, dataManager, botId, t } = context;
         const db = dataManager.db;
 
         if (args.length === 0) {
             const settings = await db.getGroupSettings(botId, from);
 
             await sock.sendMessage(from, {
-                text: `*Pesan Lock/Unlock*\n\n`
-                    + `${prefix}setclose lock <pesan>\n`
-                    + `${prefix}setclose unlock <pesan>\n`
-                    + `${prefix}setclose lock off\n`
-                    + `${prefix}setclose unlock off\n\n`
-                    + `Contoh:\n`
-                    + `${prefix}setclose lock Grup dikunci. Silakan tunggu.\n\n`
-                    + `Variabel: @user @group @time @date @greeting\n\n`
-                    + `─────────────────\n`
-                    + `Lock: ${settings.lock || '_(default)_'}\n`
-                    + `Unlock: ${settings.unlock || '_(default)_'}`,
+                text: t('setlock_usage', {
+                    prefix,
+                    lock: settings.lock || '_(default)_',
+                    unlock: settings.unlock || '_(default)_'
+                }),
             }, { quoted: msg });
             return;
         }
@@ -35,14 +29,14 @@ const command: Command = {
 
         if (type !== 'lock' && type !== 'unlock') {
             await sock.sendMessage(from, {
-                text: `Pilih tipe: *lock* atau *unlock*\n\nContoh: *${prefix}setclose lock Grup sedang dikunci*`,
+                text: t('setlock_invalid_type', { prefix }),
             }, { quoted: msg });
             return;
         }
 
         if (!message) {
             await sock.sendMessage(from, {
-                text: `Tulis pesan setelah tipe.\n\nContoh: *${prefix}setclose ${type} Pesan custom*`,
+                text: t('setlock_empty_msg', { type, prefix }),
             }, { quoted: msg });
             return;
         }
@@ -53,7 +47,7 @@ const command: Command = {
             } else {
                 await db.setUnlockMessage(botId, from, null);
             }
-            await sock.sendMessage(from, { text: `Pesan ${type} direset ke default.` }, { quoted: msg });
+            await sock.sendMessage(from, { text: t('setlock_reset', { type }) }, { quoted: msg });
             return;
         }
 
@@ -64,7 +58,7 @@ const command: Command = {
         }
 
         await sock.sendMessage(from, {
-            text: `Pesan *${type}* berhasil diatur.\n\nPreview:\n${message}`,
+            text: t('setlock_success', { type, message }),
         }, { quoted: msg });
     },
 };

@@ -5,9 +5,10 @@ import log from '../../utils/logger';
 const command: Command = {
     name: 'tagall',
     aliases: ['h', 'here'],
-    description: 'Tag semua member grup',
+    description: 'Tag all group members',
     groupAdminOnly: true,
-    async execute(sock, msg, args) {
+    async execute(sock, msg, args, context) {
+        const { t } = context;
         const from = msg.key.remoteJid!;
         if (!from.endsWith('@g.us')) return;
 
@@ -31,14 +32,13 @@ const command: Command = {
                     const media = await downloadMediaMessage({ message: quotedMsg } as any, 'buffer', {});
                     content = { video: media, caption: quotedMsg.videoMessage?.caption || '', mentions };
                 } else {
-                    content = { text: '📢 *Perhatian Semuanya!*', mentions };
+                    content = { text: t('everyone_attention'), mentions };
                 }
             } else if (args.length > 0) {
-                content = { text: `📢 *Pengumuman*\n\n${args.join(' ')}`, mentions };
+                content = { text: t('everyone_announce', { message: args.join(' ') }), mentions };
             } else {
-                // If no text, just tag everyone explicitly so it's visible
                 const tags = mentions.map(m => `@${m.split('@')[0]}`).join(' ');
-                content = { text: `📢 *Perhatian Semuanya!*\n\n${tags}`, mentions };
+                content = { text: `${t('everyone_attention')}\n\n${tags}`, mentions };
             }
 
             await sock.sendMessage(from, content);
