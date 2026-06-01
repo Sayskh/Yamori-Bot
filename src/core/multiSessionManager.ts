@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import readline from 'readline';
 import log from '../utils/logger';
+import config from '../config';
 
 const mlog = log.child({ module: 'manager' });
 
@@ -28,13 +29,20 @@ export class MultiSessionManager {
     }
 
     async init() {
-        console.clear();
-        console.log('\x1b[36m%s\x1b[0m', '=========================================');
-        console.log('\x1b[36m%s\x1b[0m', '             YAMORI BOT MANAGER          ');
-        console.log('\x1b[36m%s\x1b[0m', '=========================================');
+        if (config.enableCli) {
+            console.clear();
+            console.log('\x1b[36m%s\x1b[0m', '=========================================');
+            console.log('\x1b[36m%s\x1b[0m', '             YAMORI BOT MANAGER          ');
+            console.log('\x1b[36m%s\x1b[0m', '=========================================');
+        }
 
         await this.loadSessions();
-        this.startCLI();
+
+        if (config.enableCli) {
+            this.startCLI();
+        } else {
+            mlog.info('Bot initialized in daemon mode. CLI dashboard disabled.');
+        }
     }
 
     async loadSessions() {
