@@ -1,23 +1,22 @@
 import { Command } from '../../types/Command';
 import config from '../../config';
 import { getMenuConfig } from '../../core/configLoader';
+import { t } from '../../utils/lang';
 
 const command: Command = {
     name: 'menu',
     aliases: ['help', 'm'],
-    description: 'Tampilkan daftar perintah',
+    description: 'Display list of commands',
 
     async execute(sock, msg, args, context) {
-        const from = msg.key.remoteJid!;
-        const isBotAdmin = context.isBotAdmin;
-        const commands = context.commands;
+        const { from, isBotAdmin, commands, prefix, t } = context;
 
         if (!commands) {
-            await sock.sendMessage(from, { text: 'Could not load commands.' });
+            await sock.sendMessage(from, { text: t('menu_load_fail') });
             return;
         }
 
-        const p = context.prefix || config.prefix;
+        const p = prefix || config.prefix;
         const menuCfg = getMenuConfig();
 
         if (args.length > 0) {
@@ -25,20 +24,23 @@ const command: Command = {
             const cmd = commands.get(cmdName);
 
             if (!cmd) {
-                await sock.sendMessage(from, { text: `Command "${cmdName}" not found.` });
+                await sock.sendMessage(from, { text: t('command_not_found', { cmd: cmdName }) });
                 return;
             }
 
+            const descKey = `cmd_desc_${cmd.name}`;
+            const desc = t(descKey) !== descKey ? t(descKey) : (cmd.description || t('no_desc'));
+
             let text = `━━━ *${cmd.name.toUpperCase()}* ━━━\n\n`;
-            text += `${cmd.description || 'No description'}\n\n`;
+            text += `${desc}\n\n`;
             if (cmd.aliases && cmd.aliases.length > 0) {
-                text += `Aliases  : ${cmd.aliases.join(', ')}\n`;
+                text += `${t('aliases')}  : ${cmd.aliases.join(', ')}\n`;
             }
-            text += `Usage    : ${p}${cmd.name}`;
+            text += `${t('usage')}    : ${p}${cmd.name}`;
             if (cmd.usage) text += ` ${cmd.usage}`;
             text += `\n`;
-            if (cmd.groupAdminOnly) text += `Access   : Group Admin\n`;
-            else if (cmd.devOnly) text += `Access   : Developer\n`;
+            if (cmd.groupAdminOnly) text += `${t('access')}   : Group Admin\n`;
+            else if (cmd.devOnly) text += `${t('access')}   : Developer\n`;
 
             await sock.sendMessage(from, { text });
             return;

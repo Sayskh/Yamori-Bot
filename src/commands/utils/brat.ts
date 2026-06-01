@@ -1,34 +1,22 @@
 import { promises as fs } from 'fs';
-import * as path from 'path';
 import { writeExif } from '../../core/exif';
 import { Command } from '../../types/Command';
 import { imageToWebp } from '../../utils/converter';
 import log from '../../utils/logger';
-
-const TEMP_DIR = path.resolve(__dirname, '../../../tmp');
-
-const ensureTempDir = async () => {
-    await fs.mkdir(TEMP_DIR, { recursive: true }).catch(() => { });
-};
-
-const getTempFilename = (ext: string) => path.join(TEMP_DIR, `media_${Date.now()}_${Math.random().toString(36).substring(7)}.${ext}`);
-
-const deleteFiles = async (files: string[]) => {
-    await Promise.all(files.map(f => fs.unlink(f).catch(() => { })));
-};
+import { ensureTempDir, getTempFilename, deleteFiles } from '../../utils/tempFiles';
 
 const command: Command = {
     name: 'brat',
     aliases: ['tts', 'ttp'],
-    description: 'Buat stiker teks ala brat',
+    description: 'Create brat-style text sticker',
     category: 'Utils',
 
     async execute(sock, msg, args, context) {
         const from = msg.key.remoteJid!;
         const senderNumber = (msg.key.participant || msg.key.remoteJid || '').split('@')[0];
         const senderName = context?.pushname || msg.pushName || senderNumber || 'User';
+        const t = context.t;
         
-        // Simple parser for --bg and --color
         let text = '';
         let background = '';
         let color = '';
@@ -44,7 +32,7 @@ const command: Command = {
         }
 
         if (!text) {
-            return sock.sendMessage(from, { text: 'Silakan masukkan teksnya! Contoh: *!brat Halo semuanya* atau *!brat Halo --bg #ff0000 --color #ffffff*' }, { quoted: msg });
+            return sock.sendMessage(from, { text: t('brat_usage') }, { quoted: msg });
         }
 
         await ensureTempDir();
@@ -77,7 +65,7 @@ const command: Command = {
 
         } catch (error: any) {
             log.error({ err: error }, 'Brat command failed');
-            await sock.sendMessage(from, { text: 'Yah, gagal bikin stiker teksnya :( Coba lagi nanti ya (Mungkin server apinya lagi sibuk).' }, { quoted: msg });
+            await sock.sendMessage(from, { text: t('brat_server_busy', { fail_process: t('fail_process') }) }, { quoted: msg });
         } finally {
             await deleteFiles(createdFiles);
         }

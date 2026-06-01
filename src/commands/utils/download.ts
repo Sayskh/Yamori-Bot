@@ -69,29 +69,22 @@ async function fetchBuffer(url: string): Promise<Buffer> {
 const command: Command = {
     name: 'download',
     aliases: ['dl'],
-    description: 'Download video/slide dari TikTok, Twitter/X, Instagram, Facebook, YouTube',
+    description: 'Download media from TikTok, Twitter/X, Instagram, Facebook, YouTube',
     usage: '<url>',
 
     async execute(sock, msg, args, context) {
-        const { from, prefix } = context;
+        const { from, prefix, t } = context;
 
         if (!args[0]) {
             return sock.sendMessage(from, {
-                text: `*DOWNLOAD — Media Downloader*\n\n`
-                    + `${prefix}dl <url>\n\n`
-                    + `Platform:\n`
-                    + `• TikTok (video & slide)\n`
-                    + `• Twitter / X\n`
-                    + `• Instagram (Post, Reel, Story)\n`
-                    + `• Facebook (Video, Reel)\n`
-                    + `• YouTube`,
+                text: t('dl_usage', { prefix }),
             }, { quoted: msg });
         }
 
         const platform = detectPlatform(args[0]);
         if (!platform) {
             return sock.sendMessage(from, {
-                text: 'URL tidak valid atau platform tidak didukung.',
+                text: t('dl_invalid_url'),
             }, { quoted: msg });
         }
 
@@ -100,14 +93,13 @@ const command: Command = {
         try {
             const result = await downloadMedia(platform, args[0]);
             if (!result || !result.media || result.media.length === 0) {
-                return sock.sendMessage(from, { text: 'Media tidak ditemukan atau format tidak didukung.' }, { quoted: msg });
+                return sock.sendMessage(from, { text: t('dl_not_found') }, { quoted: msg });
             }
 
             const caption = result.title
                 ? `${result.title}${result.author ? ` — ${result.author}` : ''}`
                 : '';
 
-            // Handle Carousel (multiple images)
             if (result.type === 'carousel') {
                 const images = result.media.filter((m: any) => m.type === 'image');
                 const slice = images.slice(0, MAX_CAROUSEL_IMAGES);
@@ -123,12 +115,11 @@ const command: Command = {
                 }
 
                 if (skipped > 0) {
-                    await sock.sendMessage(from, { text: `${skipped} gambar lainnya dilewati.` });
+                    await sock.sendMessage(from, { text: t('dl_skipped', { count: skipped.toString() }) });
                 }
                 return;
             }
 
-            // Handle Single Video or Image
             const media = result.media[0];
             const buffer = await fetchBuffer(media.url);
 
@@ -142,13 +133,13 @@ const command: Command = {
             log.error({ err: e, platform }, 'Download command error');
             let text: string;
             if (e instanceof ApiError) {
-                text = `Gagal mengunduh (${e.statusCode}).`;
+                text = t('dl_api_error', { code: e.statusCode.toString() });
             } else if (e.name === 'AbortError') {
-                text = 'Download timeout, coba lagi nanti.';
-            } else if (e.message?.includes('terlalu besar')) {
-                text = e.message;
+                text = t('dl_timeout');
+            } else if (e.message?.includes('terlalu besar') || e.message?.includes('too large')) {
+                text = t('dl_file_too_large');
             } else {
-                text = 'Gagal terhubung ke server.';
+                text = t('dl_server_error');
             }
             await sock.sendMessage(from, { text }, { quoted: msg });
         }

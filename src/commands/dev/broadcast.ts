@@ -1,4 +1,4 @@
-﻿import { delay } from 'baileys';
+import { delay } from 'baileys';
 import { getDevConfig } from '../../core/configLoader';
 import { Command } from '../../types/Command';
 import { replaceVariables } from '../../utils/helpers';
@@ -7,20 +7,17 @@ import log from '../../utils/logger';
 const command: Command = {
     name: 'broadcast',
     aliases: ['bc'],
-    description: 'Kirim pesan ke semua grup yang diikuti bot',
-    usage: '<pesan>',
+    description: 'Send message to all joined groups',
+    usage: '<message>',
     devOnly: true,
 
     async execute(sock, msg, args, context) {
-        const { from, prefix } = context;
+        const { from, prefix, t } = context;
         const broadcastMsg = args.join(' ').trim();
 
         if (!broadcastMsg) {
             await sock.sendMessage(from, {
-                text: `*Broadcast Grup*\n\n`
-                    + `Gunakan: ${prefix}broadcast <pesan>\n\n`
-                    + `Contoh:\n`
-                    + `${prefix}broadcast Halo, bot sedang maintenance selama 1 jam. Mohon maaf atas ketidaknyamanannya.`,
+                text: t('broadcast_usage', { prefix })
             }, { quoted: msg });
             return;
         }
@@ -30,12 +27,12 @@ const command: Command = {
             const groups = Object.values(participating || {}) as Array<{ id: string }>;
 
             if (groups.length === 0) {
-                await sock.sendMessage(from, { text: 'Bot belum tergabung di grup mana pun.' }, { quoted: msg });
+                await sock.sendMessage(from, { text: t('broadcast_no_groups') }, { quoted: msg });
                 return;
             }
 
             await sock.sendMessage(from, {
-                text: `Memulai broadcast ke ${groups.length} grup.\n_Proses ini mungkin memakan waktu._`
+                text: t('broadcast_starting', { count: groups.length.toString() })
             }, { quoted: msg });
 
             const devCfg = getDevConfig();
@@ -55,13 +52,11 @@ const command: Command = {
             }
 
             await sock.sendMessage(from, {
-                text: `*Broadcast Selesai!*\n\n`
-                    + `Berhasil: ${success} grup\n`
-                    + `Gagal: ${failed} grup`,
+                text: t('broadcast_done', { success: success.toString(), failed: failed.toString() }),
             });
         } catch (error) {
             log.error({ err: error }, 'Broadcast command error');
-            await sock.sendMessage(from, { text: 'Terjadi kesalahan saat menjalankan broadcast.' }, { quoted: msg });
+            await sock.sendMessage(from, { text: t('broadcast_error') }, { quoted: msg });
         }
     },
 };

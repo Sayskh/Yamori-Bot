@@ -1,5 +1,4 @@
 import { promises as fs } from 'fs';
-import * as path from 'path';
 import { downloadMediaMessage, WAMessage, WASocket } from 'baileys';
 import { writeExif } from '../../core/exif';
 import { Command } from '../../types/Command';
@@ -7,19 +6,8 @@ import { imageToWebp, mediaToMp4, videoToWebp, webpToImage, webpToVideo } from '
 import log from '../../utils/logger';
 import WebP from 'node-webpmux';
 import { storeManager } from '../../core/storeManager';
-
-const TEMP_DIR = path.resolve(__dirname, '../../../tmp');
-
-const ensureTempDir = async () => {
-    await fs.mkdir(TEMP_DIR, { recursive: true }).catch(() => { });
-};
-
-const getTempFilename = (ext: string) =>
-    path.join(TEMP_DIR, `media_${Date.now()}_${Math.random().toString(36).substring(7)}.${ext}`);
-
-const deleteFiles = async (files: string[]) => {
-    await Promise.all(files.map(f => fs.unlink(f).catch(() => { })));
-};
+import { ensureTempDir, getTempFilename, deleteFiles } from '../../utils/tempFiles';
+import { t } from '../../utils/lang';
 
 function unwrapMessageContent(message: any): any {
     let current = message;
@@ -121,7 +109,7 @@ async function downloadMedia(sock: WASocket, target: WAMessage): Promise<Buffer>
 const command: Command = {
     name: 'sticker',
     aliases: ['s', 'stiker'],
-    description: 'Konversi gambar/video ke sticker atau sebaliknya',
+    description: 'Convert image/video to sticker and vice versa',
 
     async execute(sock, msg, args, context) {
         const from = msg.key.remoteJid!;
@@ -142,7 +130,7 @@ const command: Command = {
 
         const target = getTargetMessage(sock, msg);
         if (!target) {
-            return sock.sendMessage(from, { text: 'Please reply to an image, video, or sticker.' }, { quoted: msg });
+            return sock.sendMessage(from, { text: t('no_media') }, { quoted: msg });
         }
 
         const normalized = unwrapMessageContent(target.message);
@@ -152,7 +140,7 @@ const command: Command = {
         const isAnimatedSticker = !!normalized?.stickerMessage?.isAnimated;
 
         if (!hasImage && !hasVideo && !hasSticker) {
-            return sock.sendMessage(from, { text: 'Please reply to an image, video, or sticker.' }, { quoted: msg });
+            return sock.sendMessage(from, { text: t('no_media') }, { quoted: msg });
         }
 
         try {
@@ -163,7 +151,7 @@ const command: Command = {
             }
         } catch (error: any) {
             log.error({ err: error }, 'Sticker command failed');
-            await sock.sendMessage(from, { text: 'Failed to process sticker.' }, { quoted: msg });
+            await sock.sendMessage(from, { text: t('fail_process') }, { quoted: msg });
         }
     }
 };
@@ -246,7 +234,7 @@ async function processStickerToMedia(
                         document: mediaBuffer,
                         mimetype: 'image/webp',
                         fileName: 'sticker.webp',
-                        caption: 'Konversi animasi gagal. Ini file WebP aslinya.'
+                        caption: t('fail_process') + '. WebP.'
                     },
                     { quoted: replyMsg }
                 );

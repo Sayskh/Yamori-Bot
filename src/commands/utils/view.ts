@@ -1,17 +1,18 @@
 import { Command } from '../../types/Command';
 import { downloadMediaMessage } from 'baileys';
+import pino from 'pino';
+import log from '../../utils/logger';
 
 const command: Command = {
     name: 'view',
     aliases: [],
-    description: 'Kirim ulang foto/video sekali lihat',
+    description: 'Resend view-once photo/video',
 
     async execute(sock, msg, args, context) {
-        const { from } = context;
+        const { from, t } = context;
 
         const quoted = msg.message?.extendedTextMessage?.contextInfo?.quotedMessage;
 
-        // Check if the incoming message itself is a view-once
         const directViewOnce =
             msg.message?.viewOnceMessage?.message ||
             msg.message?.viewOnceMessageV2?.message ||
@@ -19,7 +20,7 @@ const command: Command = {
 
         if (!quoted && !directViewOnce) {
             await sock.sendMessage(from, {
-                text: 'Reply pesan foto/video sekali lihat untuk mengirim ulang.',
+                text: t('view_no_reply'),
             }, { quoted: msg });
             return;
         }
@@ -29,13 +30,12 @@ const command: Command = {
             quoted?.viewOnceMessage?.message ||
             quoted?.viewOnceMessageV2?.message ||
             quoted?.viewOnceMessageV2Extension?.message ||
-            // Some clients wrap it differently
             (quoted?.imageMessage?.viewOnce ? quoted : null) ||
             (quoted?.videoMessage?.viewOnce ? quoted : null);
 
         if (!viewOnce) {
             await sock.sendMessage(from, {
-                text: 'Pesan yang di-reply bukan foto/video sekali lihat.',
+                text: t('view_not_viewonce'),
             }, { quoted: msg });
             return;
         }
@@ -45,7 +45,7 @@ const command: Command = {
 
         if (!isImage && !isVideo) {
             await sock.sendMessage(from, {
-                text: 'Format media tidak didukung.',
+                text: t('view_unsupported'),
             }, { quoted: msg });
             return;
         }
@@ -62,12 +62,14 @@ const command: Command = {
                     message: viewOnce
                 };
 
+            const silentLogger = pino({ level: 'silent' });
+
             const buffer = await downloadMediaMessage(
                 fakeMessage as any,
                 'buffer',
                 {},
                 {
-                    logger: console as any,
+                    logger: silentLogger as any,
                     reuploadRequest: sock.updateMediaMessage
                 }
             ) as Buffer;
@@ -88,9 +90,9 @@ const command: Command = {
                 }, { quoted: msg });
             }
         } catch (error) {
-            console.error('View command error:', error);
+            log.error({ err: error }, 'View command error');
             await sock.sendMessage(from, {
-                text: 'Gagal mengunduh media. Pastikan pesannya belum kadaluarsa.',
+                text: t('view_fail'),
             }, { quoted: msg });
         }
     },

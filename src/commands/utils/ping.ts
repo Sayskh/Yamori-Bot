@@ -1,21 +1,21 @@
 import { Command } from '../../types/Command';
+import { t } from '../../utils/lang';
 
-/** .ping — Reports round-trip latency in milliseconds. */
 const command: Command = {
     name: 'ping',
     aliases: ['p'],
-    description: 'Cek latensi bot',
+    description: 'Check bot latency',
 
     async execute(sock, msg, _args, context) {
         const start = Date.now();
         const sentMsg = await sock.sendMessage(context.from, {
-            text: '🏓 Pinging...',
+            text: t('pinging'),
         }, { quoted: msg });
 
         if (sentMsg) {
             const latency = Date.now() - start;
             await sock.sendMessage(context.from, {
-                text: `🏓 Pong! *${latency}ms*`,
+                text: `${t('pong')} *${latency}ms*`,
                 edit: sentMsg.key,
             });
         }
