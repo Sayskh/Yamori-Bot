@@ -5,6 +5,7 @@ import log from '../utils/logger';
 import { getAdminConfig } from './configLoader';
 import { getGroupMetadata } from './groupCache';
 import fs from 'fs';
+import { normalizeBotId } from '../utils/jid';
 
 const glog = log.child({ module: 'group' });
 
@@ -14,17 +15,13 @@ export async function handleGroupParticipantsUpdate(sock: WASocket, update: { id
     if (action !== 'add' && action !== 'remove') return;
 
     try {
-        let botId = sock.user?.id || '';
-        if (botId.includes(':')) botId = botId.split(':')[0];
-        if (!botId.endsWith('@s.whatsapp.net')) botId += '@s.whatsapp.net';
-        botId = botId.replace(/@s\.whatsapp\.net@s\.whatsapp\.net/g, '@s.whatsapp.net'); // safety
+        const botId = normalizeBotId(sock);
 
         const db = dataManager.db;
         const settings = await db.getGroupSettings(botId, id);
 
         glog.info({ action, botId, groupId: id, settingsFound: !!settings, welcomeEnabled: settings?.welcomeEnabled, goodbyeEnabled: settings?.goodbyeEnabled }, 'Group participant update triggered');
 
-        // If settings doesn't strictly have the properties defined, fallback to false
         const welcomeEnabled = settings ? settings.welcomeEnabled : false;
         const goodbyeEnabled = settings ? settings.goodbyeEnabled : false;
 
@@ -59,11 +56,29 @@ export async function handleGroupParticipantsUpdate(sock: WASocket, update: { id
             });
 
             if (imagePath && fs.existsSync(imagePath)) {
-                await sock.sendMessage(id, {
-                    image: { url: imagePath },
-                    caption: text,
-                    mentions: [pId],
-                });
+                const ext = imagePath.split('.').pop()?.toLowerCase();
+                if (ext === 'mp4' || ext === 'mkv' || ext === 'gif') {
+                    await sock.sendMessage(id, {
+                        video: { url: imagePath },
+                        gifPlayback: ext === 'gif',
+                        caption: text,
+                        mentions: [pId],
+                    });
+                } else if (ext === 'png' || ext === 'jpg' || ext === 'jpeg' || ext === 'webp') {
+                    await sock.sendMessage(id, {
+                        image: { url: imagePath },
+                        caption: text,
+                        mentions: [pId],
+                    });
+                } else {
+                    await sock.sendMessage(id, {
+                        document: { url: imagePath },
+                        mimetype: 'application/octet-stream',
+                        fileName: `attachment.${ext || 'bin'}`,
+                        caption: text,
+                        mentions: [pId],
+                    });
+                }
             } else {
                 await sock.sendMessage(id, {
                     text,

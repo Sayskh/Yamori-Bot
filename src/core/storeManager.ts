@@ -11,7 +11,6 @@ class SimpleStore {
     bind(sock: WASocket) {
         if (this.currentSock === sock) return;
 
-        // Remove old listener if re-binding to prevent memory leaks
         if (this.currentSock && this.upsertListener) {
             this.currentSock.ev.off('messages.upsert', this.upsertListener);
         }

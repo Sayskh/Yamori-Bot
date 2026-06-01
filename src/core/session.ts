@@ -15,6 +15,7 @@ import log from '../utils/logger';
 import messageHandler from './handler';
 import { handleGroupParticipantsUpdate } from './groupHandler';
 import { storeManager } from './storeManager';
+import giveawayService from '../services/giveawayService';
 import pino from 'pino';
 
 const MAX_RETRIES = 10;
@@ -46,7 +47,6 @@ export class Session {
     }
 
     async start(phoneNumber?: string) {
-        // Reset bind state for the new socket instance
         this.eventsBound = false;
 
         const { state, saveCreds } = await useMultiFileAuthState(this.folderPath);
@@ -94,7 +94,6 @@ export class Session {
             if (connection === 'close') {
                 const statusCode = (lastDisconnect?.error as Boom)?.output?.statusCode;
 
-                // Don't reconnect if logged out OR if connection was replaced by another client
                 const shouldReconnect =
                     statusCode !== DisconnectReason.loggedOut &&
                     statusCode !== DisconnectReason.connectionReplaced;
@@ -133,8 +132,10 @@ export class Session {
                 this.connectedAt = new Date();
                 this.bindEvents();
 
-                // Only reset retryCount after connection is stable for 30 seconds
-                // to prevent infinite loops when connection opens briefly then drops
+                giveawayService.restoreTimers(this.sock!).catch(err => {
+                    this.logger.error({ err }, 'Failed to restore giveaway timers');
+                });
+
                 this.stableTimer = setTimeout(() => {
                     this.retryCount = 0;
                     this.logger.info('Connection stable, retry count reset.');
@@ -166,6 +167,16 @@ export class Session {
                 await handleGroupParticipantsUpdate(this.sock!, update as any);
             } catch (error) {
                 this.logger.error({ err: error }, 'Group handler error');
+            }
+        });
+
+        this.sock.ev.on('messages.reaction', async (reactions) => {
+            for (const reaction of reactions) {
+                try {
+                    await giveawayService.handleReaction(this.sock!, reaction);
+                } catch (error) {
+                    this.logger.error({ err: error }, 'Giveaway reaction handler error');
+                }
             }
         });
 

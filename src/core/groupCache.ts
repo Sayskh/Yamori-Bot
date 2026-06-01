@@ -19,8 +19,17 @@ export async function getGroupMetadata(sock: WASocket, groupId: string): Promise
     }
 
     if (cache.size >= MAX_CACHE_SIZE) {
-        const oldestKey = cache.keys().next().value;
-        if (oldestKey) cache.delete(oldestKey);
+        let evicted = false;
+        for (const [key, val] of cache.entries()) {
+            if (now - val.timestamp >= CACHE_TTL) {
+                cache.delete(key);
+                evicted = true;
+            }
+        }
+        if (!evicted) {
+            const oldestKey = cache.keys().next().value;
+            if (oldestKey) cache.delete(oldestKey);
+        }
     }
 
     const data = await sock.groupMetadata(groupId);
