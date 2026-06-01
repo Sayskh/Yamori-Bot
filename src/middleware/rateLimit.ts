@@ -20,3 +20,10 @@ export function isRateLimited(sender: string): boolean {
 
     return false;
 }
+
+setInterval(() => {
+    const cutoff = Date.now() - COOLDOWN_MS * 2;
+    for (const [key, time] of cooldowns) {
+        if (time < cutoff) cooldowns.delete(key);
+    }
+}, 5 * 60 * 1000).unref();

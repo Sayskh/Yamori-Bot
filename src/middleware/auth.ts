@@ -1,5 +1,6 @@
 import config from '../config';
 import { GroupParticipant } from 'baileys';
+import { normalizeJid, extractNumericId } from '../utils/jid';
 
 export function isBotAdmin(sender: string): boolean {
     const senderNumber = sender.split('@')[0].replace(/\D/g, '');
@@ -7,20 +8,6 @@ export function isBotAdmin(sender: string): boolean {
         const adminNumber = admin.split('@')[0].replace(/\D/g, '');
         return adminNumber.length > 0 && senderNumber === adminNumber;
     });
-}
-
-function normalizeJid(jid: string): string {
-    if (!jid) return '';
-
-    const [userPart, domain = 's.whatsapp.net'] = jid.split('@');
-    const user = userPart.includes(':') ? userPart.split(':')[0] : userPart;
-    return `${user}@${domain}`.toLowerCase();
-}
-
-function extractNumericId(jid: string): string {
-    const normalized = normalizeJid(jid);
-    const user = normalized.split('@')[0];
-    return user.replace(/\D/g, '');
 }
 
 export function isGroupAdmin(participants: GroupParticipant[], sender: string): boolean {
@@ -31,11 +18,9 @@ export function isGroupAdmin(participants: GroupParticipant[], sender: string): 
         const pid = p?.id || '';
         if (!pid) return false;
 
-        // Direct match on primary id
         const pidNorm = normalizeJid(pid);
         if (pidNorm === senderNorm) return true;
 
-        // Numeric fallback on primary id
         const pidNum = extractNumericId(pid);
         if (senderNum.length > 0 && pidNum.length > 0 && pidNum === senderNum) return true;
 
