@@ -52,12 +52,12 @@ async function fetchBuffer(url: string): Promise<Buffer> {
 
         const contentLength = parseInt(res.headers.get('content-length') || '0');
         if (contentLength > MAX_FILE_SIZE) {
-            throw new Error(`File terlalu besar (${(contentLength / 1024 / 1024).toFixed(1)}MB)`);
+            throw new Error(`File too large (${(contentLength / 1024 / 1024).toFixed(1)}MB)`);
         }
 
         const arrayBuffer = await res.arrayBuffer();
         if (arrayBuffer.byteLength > MAX_FILE_SIZE) {
-            throw new Error(`File terlalu besar (${(arrayBuffer.byteLength / 1024 / 1024).toFixed(1)}MB)`);
+            throw new Error(`File too large (${(arrayBuffer.byteLength / 1024 / 1024).toFixed(1)}MB)`);
         }
 
         return Buffer.from(arrayBuffer);
@@ -136,7 +136,7 @@ const command: Command = {
                 text = t('dl_api_error', { code: e.statusCode.toString() });
             } else if (e.name === 'AbortError') {
                 text = t('dl_timeout');
-            } else if (e.message?.includes('terlalu besar') || e.message?.includes('too large')) {
+            } else if (e.message?.includes('too large')) {
                 text = t('dl_file_too_large');
             } else {
                 text = t('dl_server_error');

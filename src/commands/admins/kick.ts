@@ -12,12 +12,12 @@ const command: Command = {
 
         let targetJid: string | null = null;
 
-        // Cek apakah me-mention seseorang
+        // Check if someone is mentioned
         const mentionedJidList = msg.message?.extendedTextMessage?.contextInfo?.mentionedJid || [];
         if (mentionedJidList.length > 0) {
             targetJid = mentionedJidList[0];
         }
-        // Atau membalas pesan seseorang
+        // Or replying to someone's message
         else if (msg.message?.extendedTextMessage?.contextInfo?.participant) {
             targetJid = msg.message.extendedTextMessage.contextInfo.participant;
         }
