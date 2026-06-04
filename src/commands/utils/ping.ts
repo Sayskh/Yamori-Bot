@@ -1,5 +1,4 @@
 import { Command } from '../../types/Command';
-import { t } from '../../utils/lang';
 
 const command: Command = {
     name: 'ping',
@@ -7,6 +6,7 @@ const command: Command = {
     description: 'Check bot latency',
 
     async execute(sock, msg, _args, context) {
+        const { t } = context;
         const start = Date.now();
         const sentMsg = await sock.sendMessage(context.from, {
             text: t('pinging'),

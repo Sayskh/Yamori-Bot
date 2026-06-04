@@ -1,6 +1,5 @@
 import { Command } from '../../types/Command';
 import log from '../../utils/logger';
-import { t } from '../../utils/lang';
 
 const command: Command = {
     name: 'add',
@@ -9,6 +8,7 @@ const command: Command = {
     groupAdminOnly: true,
     async execute(sock, msg, args, context) {
         const from = msg.key.remoteJid!;
+        const { t } = context;
         const isGroup = from.endsWith('@g.us');
 
         if (!isGroup) {

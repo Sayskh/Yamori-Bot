@@ -1,7 +1,6 @@
 import { Command } from '../../types/Command';
 import config from '../../config';
 import { getMenuConfig } from '../../core/configLoader';
-import { t } from '../../utils/lang';
 
 const command: Command = {
     name: 'menu',
