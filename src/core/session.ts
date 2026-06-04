@@ -12,7 +12,7 @@ import fs from 'fs';
 import path from 'path';
 import qrcode from 'qrcode-terminal';
 import log from '../utils/logger';
-import messageHandler from './handler';
+import messageHandler, { trackSentMessage } from './handler';
 import { handleGroupParticipantsUpdate } from './groupHandler';
 import { storeManager } from './storeManager';
 import giveawayService from '../services/giveawayService';
@@ -67,6 +67,16 @@ export class Session {
             browser: Browsers.ubuntu('Firefox'),
             generateHighQualityLinkPreview: false,
         });
+
+        // Patch sendMessage to track outgoing message IDs for self-bot loop prevention
+        const originalSendMessage = this.sock.sendMessage.bind(this.sock);
+        this.sock.sendMessage = async (jid, content, options) => {
+            const result = await originalSendMessage(jid, content, options);
+            if (result?.key?.id) {
+                trackSentMessage(result.key.id);
+            }
+            return result;
+        };
 
         if (phoneNumber && !this.sock.authState.creds.registered) {
             setTimeout(async () => {

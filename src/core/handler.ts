@@ -82,13 +82,31 @@ function escapeRegex(input: string): string {
     return input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+export const sentMessageIds = new Set<string>();
+
+export function trackSentMessage(id: string): void {
+    sentMessageIds.add(id);
+    if (sentMessageIds.size > 1000) {
+        const first = sentMessageIds.values().next().value;
+        if (first !== undefined) {
+            sentMessageIds.delete(first);
+        }
+    }
+}
+
 async function messageHandler(
     sock: WASocket,
     update: { messages: WAMessage[]; type: string }
 ): Promise<void> {
     try {
         const msg = update.messages[0];
-        if (!msg.message || msg.key.fromMe) return;
+        if (!msg.message) return;
+
+        if (msg.key.fromMe) {
+            if (!config.selfBot || (msg.key.id && sentMessageIds.has(msg.key.id))) {
+                return;
+            }
+        }
 
         const remoteJid = msg.key.remoteJid || '';
         const remoteJidAlt = (msg.key as any).remoteJidAlt as string | undefined;
