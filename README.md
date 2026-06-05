@@ -6,7 +6,7 @@
 ![Node.js](https://img.shields.io/badge/Node.js-≥20.0.0-339933?logo=node.js&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
 ![Baileys](https://img.shields.io/badge/Baileys-WhatsApp%20Web%20API-25D366?logo=whatsapp&logoColor=white)
-![License](https://img.shields.io/github/license/Sayskh/Inori-Bot)
+![License](https://img.shields.io/github/license/Sayskh/Inori-bot)
 
 **High-performance, multi-session WhatsApp bot** built on [Baileys](https://github.com/WhiskeySockets/Baileys).
 <br/>
