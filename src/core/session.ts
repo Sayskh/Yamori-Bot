@@ -30,6 +30,7 @@ export class Session {
     private folderPath: string;
     private retryCount = 0;
     private eventsBound = false;
+    private destroyed = false;
     private stableTimer: ReturnType<typeof setTimeout> | undefined;
 
     // Metrics for dashboard
@@ -47,6 +48,7 @@ export class Session {
     }
 
     async start(phoneNumber?: string) {
+        if (this.destroyed) return;
         this.eventsBound = false;
 
         const { state, saveCreds } = await useMultiFileAuthState(this.folderPath);
@@ -96,7 +98,7 @@ export class Session {
         this.sock.ev.on('connection.update', (update: Partial<ConnectionState>) => {
             const { connection, lastDisconnect, qr } = update;
 
-            if (qr && !phoneNumber) {
+            if (qr && !phoneNumber && !this.destroyed) {
                 console.log(`\nScan QR for session: ${this.sessionId}`);
                 qrcode.generate(qr, { small: true });
             }
@@ -116,7 +118,7 @@ export class Session {
                 }
                 this.connectedAt = null;
 
-                if (shouldReconnect) {
+                if (shouldReconnect && !this.destroyed) {
                     this.retryCount++;
 
                     if (this.retryCount > MAX_RETRIES) {
@@ -198,6 +200,11 @@ export class Session {
     }
 
     async stop() {
+        this.destroyed = true;
+        if (this.stableTimer) {
+            clearTimeout(this.stableTimer);
+            this.stableTimer = undefined;
+        }
         this.sock?.end(undefined);
         storeManager.deleteStore(this.sessionId);
     }

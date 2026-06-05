@@ -1,18 +1,24 @@
 <div align="center">
 
-# 🦎 Yamori WhatsApp Bot
+<h1 align="center"><samp>🌸 INORI WHATSAPP BOT</samp></h1>
+<p align="center"><em>Next-Generation Multi-Session WhatsApp Daemon built with TypeScript</em></p>
 
 ![Node.js](https://img.shields.io/badge/Node.js-≥20.0.0-339933?logo=node.js&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
 ![Baileys](https://img.shields.io/badge/Baileys-WhatsApp%20Web%20API-25D366?logo=whatsapp&logoColor=white)
-![License](https://img.shields.io/github/license/Sayskh/Yamori-Bot)
+![License](https://img.shields.io/github/license/Sayskh/Inori-Bot)
 
 **High-performance, multi-session WhatsApp bot** built on [Baileys](https://github.com/WhiskeySockets/Baileys).
+<br/>
+<img src="https://media1.tenor.com/m/glWRAhtVU5AAAAAC/cry.gif" alt="Inori Bot" width="220"/>
+<br/>
 
 Dibangun dengan arsitektur TypeScript modern — mengutamakan stabilitas,
 multi-session handling yang efisien untuk banyak bot, dan CLI dashboard.
-
 </div>
+
+> [!CAUTION]
+> Bot ini pakai [Baileys](https://github.com/WhiskeySockets/Baileys) (unofficial WhatsApp Web API). Pake bot = risiko kena **ban permanen** dari WhatsApp. Disarankan pakai nomor cadangan, bukan nomor utama. Segala risiko ditanggung pengguna.
 
 ---
 
@@ -28,6 +34,7 @@ multi-session handling yang efisien untuk banyak bot, dan CLI dashboard.
 | **Sticker Maker** | Generate stiker dari gambar/video via `ffmpeg` + `node-webpmux` |
 | **Media Downloader** | Download dari TikTok, Instagram, Twitter/X, Facebook, YouTube (`.dl <url>`) |
 | **Structured Logging** | Logging via `pino` — console output + file persist (`data/logs/bot.log`) |
+| **Self-Bot Mode** | Bot merespons command dari akunnya sendiri, dengan loop prevention bawaan |
 
 ## Requirements
 
@@ -38,8 +45,8 @@ multi-session handling yang efisien untuk banyak bot, dan CLI dashboard.
 
 ```bash
 # 1. Clone repo
-git clone https://github.com/Sayskh/Yamori-Bot.git
-cd Yamori-Bot
+git clone https://github.com/Sayskh/Inori-Bot.git
+cd Inori-Bot
 
 # 2. Install dependencies
 npm install
@@ -51,11 +58,12 @@ cp .env.example .env
 Edit file `.env` sesuai kebutuhan:
 
 ```env
-BOT_NAME=Yamori
+BOT_NAME=Inori
 PREFIX=.
 DEV=628xxxxxxxxxx
 API_URL=https://apicobalt.mgytr.top/
 BLOCK_DMS=true
+SELF_BOT=false
 ```
 
 > [!IMPORTANT]

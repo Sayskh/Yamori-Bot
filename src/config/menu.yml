@@ -1,19 +1,17 @@
-header: "· · · *{botName} MENU* · · ·"
+header: "bot menu."
 footer: |
-  · · · · · · · · · · ·
-    {prefix}help <command>
+  —
+  {prefix}help <command>
 
-categoryHeader: "✦ *{category}*"
-commandItem: "  › {command}"
+categoryHeader: "{category}"
+commandItem: "· {command}"
 
 categoryLabels:
-  Main: "MAIN"
-  Utils: "GENERAL"
-  Admins: "ADMIN"
-  Dev: "DEVELOPER"
+  Utils: "general"
+  Admins: "admin"
+  Dev: "developer"
 
 categoriesOrder:
-  - "Main"
   - "Utils"
   - "Admins"
   - "Dev"

@@ -32,7 +32,7 @@ export class MultiSessionManager {
         if (config.enableCli) {
             console.clear();
             console.log('\x1b[36m%s\x1b[0m', '=========================================');
-            console.log('\x1b[36m%s\x1b[0m', '             YAMORI BOT MANAGER          ');
+            console.log('\x1b[36m%s\x1b[0m', '              BOT MANAGER               ');
             console.log('\x1b[36m%s\x1b[0m', '=========================================');
         }
 
@@ -80,7 +80,7 @@ export class MultiSessionManager {
     async deleteSession(sessionId: string) {
         const session = this.sessions.get(sessionId);
         if (session) {
-            try { session.sock?.end(undefined); } catch { }
+            await session.stop();
             this.sessions.delete(sessionId);
         }
 
@@ -88,11 +88,6 @@ export class MultiSessionManager {
         if (fs.existsSync(sessionPath)) {
             fs.rmSync(sessionPath, { recursive: true, force: true });
         }
-
-        try {
-            const { storeManager } = require('./storeManager');
-            storeManager.deleteStore(sessionId);
-        } catch { }
 
         mlog.info(`Session ${sessionId} deleted.`);
     }
