@@ -10,7 +10,7 @@ const config = {
     blockDms: process.env.BLOCK_DMS === 'true',
     language: process.env.LANGUAGE || 'en',
     enableCli: process.env.ENABLE_CLI === 'true',
-    selfBot: process.env.SELF_BOT === 'false',
+    selfBot: process.env.SELF_BOT === 'true',
 } as const;
 
 export default config;
