@@ -59,40 +59,35 @@ gc_usage: "Use:\n• *{prefix}gc close* — Lock group\n• *{prefix}gc open* �
 fail_bot_admin: "Failed to change settings. Bot needs admin privileges."
 already_lock: "Group is already locked."
 already_unlock: "Group is already unlocked."
+giveaway_title: "🎉  *GIVEAWAY TIME*  🎉"
 giveaway_start_announcement: |
-  *GIVEAWAY*
-
-  Prize: {prize}
-  Winners: {winnersCount}
-  Ends: {endTime} WIB
-
-  React {emoji} on this message to participate
-
-  Host: @{host}
+  🎁  *Prize:* {prize}
+  👥  *Winners:* {winnersCount} Winner(s)
+  📅  *Ends:* {endTime} WIB
+  👤  *Host:* @{host}
+giveaway_join_button: "🎟️ Join"
+giveaway_footer: "Click the button below to participate!"
 giveaway_end_no_participants: |
-  *GIVEAWAY ENDED*
-
-  Prize: {prize}
-
-  No participants.
-
-  Host: @{host}
+  📢  *GIVEAWAY ENDED*  📢
+  ────────────────────
+  🎁  *Prize:* {prize}
+  👥  *Participants:* 0 (No participants joined)
+  👤  *Host:* @{host}
 giveaway_end_announcement: |
-  *GIVEAWAY ENDED*
+  🎉  *GIVEAWAY WINNERS*  🎉
+  ────────────────────
+  🎁  *Prize:* {prize}
+  👥  *Total Participants:* {participantsCount}
+  👤  *Host:* @{host}
 
-  Prize: {prize}
-
-  *Winners:*
+  ✨  *Congratulations to the Winners:*
   {winners}
-
-  Total Participants: {participantsCount}
-  Host: @{host}
 giveaway_reroll_announcement: |
-  *GIVEAWAY REROLL*
+  🔄  *GIVEAWAY REROLL*  🔄
+  ────────────────────
+  🎁  *Prize:* {prize}
 
-  Prize: {prize}
-
-  *New Winners:*
+  ✨  *New Congratulations to:*
   {winners}
 
 lang_current: "*Group Language*\n\nCurrent language: *{lang}*\n\nChange language:\n• *{prefix}lang en* (English)\n• *{prefix}lang id* (Indonesian)"
@@ -228,3 +223,40 @@ goodbye_status: "*Goodbye Message*\n\nStatus: *{status}*\n\n� *{prefix}goodbye
 giveaway_end_first: "{giveaway_active}\nEnd it first with {prefix}giveaway end"
 prefix_status: "{current_prefix} {currentPrefix} ({statusLabel})\n\nUsage:\n� *{prefix}setprefix <new_prefix>* � Change prefix\n� *{prefix}setprefix reset* � Reset to default"
 brat_server_busy: "{fail_process} (API server might be busy)."
+
+anime_searching: "Searching for *{query}*..."
+anime_usage: "Search anime from MyAnimeList.\n\nUsage: {prefix}anime <title>\nExample: {prefix}anime naruto"
+anime_not_found: "No anime found for *{query}*."
+anime_search_fail: "Failed to search anime. Try again later."
+anime_select_title: "🔍 Anime Search Results"
+anime_select_footer: "Select an anime to see full details"
+anime_detail_fail: "Failed to load anime details."
+anime_detail: |
+  📊  *Score:* {score} ⭐ (Ranked #{rank})
+  📺  *Type:* {type} • {episodes} Episode(s)
+  📅  *Aired:* {season} {year}
+  📌  *Status:* {status}
+  🎬  *Studio:* {studios}
+  🏷️  *Genre:* {genres}
+
+  📝  *Synopsis:*
+  {synopsis}
+anime_open_mal: "Open on MyAnimeList"
+cmd_desc_anime: "Search anime from MyAnimeList"
+
+manga_usage: "Search manga from MyAnimeList.\n\nUsage: {prefix}manga <title>\nExample: {prefix}manga one piece"
+manga_not_found: "No manga found for *{query}*."
+manga_search_fail: "Failed to search manga. Try again later."
+manga_open_mal: "Open on MyAnimeList"
+cmd_desc_manga: "Search manga from MyAnimeList"
+manga_detail: |
+  📊  *Score:* {score} ⭐ (Ranked #{rank})
+  📖  *Type:* {type} • {chapters} Chapter(s) ({volumes} Volume(s))
+  📅  *Published:* {published}
+  📌  *Status:* {status}
+  ✍️  *Author(s):* {authors}
+  🏷️  *Genre:* {genres}
+
+  📝  *Synopsis:*
+  {synopsis}
+

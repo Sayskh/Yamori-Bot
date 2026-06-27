@@ -59,40 +59,35 @@ gc_usage: "Gunakan:\n• *{prefix}gc close* — Kunci grup\n• *{prefix}gc open
 fail_bot_admin: "Gagal mengubah pengaturan. Bot perlu hak admin."
 already_lock: "Grup sudah dikunci sebelumnya."
 already_unlock: "Grup sudah dibuka sebelumnya."
+giveaway_title: "🎉  *GIVEAWAY TIME*  🎉"
 giveaway_start_announcement: |
-  *GIVEAWAY*
-
-  Hadiah: {prize}
-  Jumlah Pemenang: {winnersCount}
-  Berakhir: {endTime} WIB
-
-  React {emoji} pada pesan ini untuk ikut serta
-
-  Host: @{host}
+  🎁  *Hadiah:* {prize}
+  👥  *Pemenang:* {winnersCount} Orang
+  📅  *Selesai:* {endTime} WIB
+  👤  *Host:* @{host}
+giveaway_join_button: "🎟️ Gabung"
+giveaway_footer: "Klik tombol di bawah untuk ikut serta!"
 giveaway_end_no_participants: |
-  *GIVEAWAY BERAKHIR*
-
-  Hadiah: {prize}
-
-  Tidak ada peserta.
-
-  Host: @{host}
+  📢  *GIVEAWAY BERAKHIR*  📢
+  ────────────────────
+  🎁  *Hadiah:* {prize}
+  👥  *Peserta:* 0 (Tidak ada yang ikut)
+  👤  *Host:* @{host}
 giveaway_end_announcement: |
-  *GIVEAWAY BERAKHIR*
+  🎉  *PEMENANG GIVEAWAY*  🎉
+  ────────────────────
+  🎁  *Hadiah:* {prize}
+  👥  *Total Peserta:* {participantsCount} Orang
+  👤  *Host:* @{host}
 
-  Hadiah: {prize}
-
-  *Pemenang:*
+  ✨  *Selamat Kepada Pemenang:*
   {winners}
-
-  Total Peserta: {participantsCount}
-  Host: @{host}
 giveaway_reroll_announcement: |
-  *GIVEAWAY REROLL*
+  🔄  *GIVEAWAY REROLL*  🔄
+  ────────────────────
+  🎁  *Hadiah:* {prize}
 
-  Hadiah: {prize}
-
-  *Pemenang Baru:*
+  ✨  *Selamat Kepada Pemenang Baru:*
   {winners}
 
 lang_current: "*Bahasa Grup*\n\nBahasa saat ini: *{lang}*\n\nUbah bahasa:\n• *{prefix}lang en* (Bahasa Inggris)\n• *{prefix}lang id* (Bahasa Indonesia)"
@@ -223,8 +218,45 @@ cmd_desc_menu: "Tampilkan menu daftar perintah"
 cmd_desc_lang: "Setel bahasa respon bot untuk grup ini"
 only_admin: "Hanya Admin"
 all_members: "Semua Member"
-welcome_status: "*Welcome Message*\n\nStatus: *{status}*\n\n� *{prefix}welcome on*\n� *{prefix}welcome off*"
-goodbye_status: "*Goodbye Message*\n\nStatus: *{status}*\n\n� *{prefix}goodbye on*\n� *{prefix}goodbye off*"
+welcome_status: "*Welcome Message*\n\nStatus: *{status}*\n\n *{prefix}welcome on*\n *{prefix}welcome off*"
+goodbye_status: "*Goodbye Message*\n\nStatus: *{status}*\n\n *{prefix}goodbye on*\n *{prefix}goodbye off*"
 giveaway_end_first: "{giveaway_active}\nAkhiri dulu dengan {prefix}giveaway end"
-prefix_status: "{current_prefix} {currentPrefix} ({statusLabel})\n\nPenggunaan:\n� *{prefix}setprefix <prefix_baru>* � Ubah prefix\n� *{prefix}setprefix reset* � Kembalikan ke default"
+prefix_status: "{current_prefix} {currentPrefix} ({statusLabel})\n\nPenggunaan:\n *{prefix}setprefix <prefix_baru>*  Ubah prefix\n *{prefix}setprefix reset*  Kembalikan ke default"
 brat_server_busy: "{fail_process} (Mungkin server apinya lagi sibuk)."
+
+anime_searching: "Mencari *{query}*..."
+anime_usage: "Cari anime dari MyAnimeList.\n\nPenggunaan: {prefix}anime <judul>\nContoh: {prefix}anime naruto"
+anime_not_found: "Anime *{query}* tidak ditemukan."
+anime_search_fail: "Gagal mencari anime. Coba lagi nanti."
+anime_select_title: "🔍 Hasil Pencarian Anime"
+anime_select_footer: "Pilih anime untuk melihat detail lengkap"
+anime_detail_fail: "Gagal memuat detail anime."
+anime_detail: |
+  📊  *Skor:* {score} ⭐ (Peringkat #{rank})
+  📺  *Tipe:* {type} • {episodes} Episode
+  📅  *Tayang:* {season} {year}
+  📌  *Status:* {status}
+  🎬  *Studio:* {studios}
+  🏷️  *Genre:* {genres}
+
+  📝  *Sinopsis:*
+  {synopsis}
+anime_open_mal: "Buka di MyAnimeList"
+cmd_desc_anime: "Cari anime dari MyAnimeList"
+
+manga_usage: "Cari manga dari MyAnimeList.\n\nPenggunaan: {prefix}manga <judul>\nContoh: {prefix}manga one piece"
+manga_not_found: "Manga *{query}* tidak ditemukan."
+manga_search_fail: "Gagal mencari manga. Coba lagi nanti."
+manga_open_mal: "Buka di MyAnimeList"
+cmd_desc_manga: "Cari manga dari MyAnimeList"
+manga_detail: |
+  📊  *Skor:* {score} ⭐ (Peringkat #{rank})
+  📖  *Tipe:* {type} • {chapters} Chapter ({volumes} Volume)
+  📅  *Terbit:* {published}
+  📌  *Status:* {status}
+  ✍️  *Penulis:* {authors}
+  🏷️  *Genre:* {genres}
+
+  📝  *Sinopsis:*
+  {synopsis}
+
