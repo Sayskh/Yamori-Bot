@@ -53,14 +53,21 @@ class GiveawayService {
             host: hostJid.split('@')[0]
         }, lang);
 
+        const header = t('giveaway_title', undefined, lang) || '🎉  *GIVEAWAY TIME*  🎉';
+        const instruction = lang === 'id' 
+            ? `Reaksi pesan ini dengan emoji ${emoji} untuk bergabung!` 
+            : `React to this message with ${emoji} to join!`;
+        const text = `${header}\n\n${announcement}\n\n${instruction}`;
+
         const sentMsg = await sock.sendMessage(groupId, {
-            text: announcement,
+            text,
             mentions: [hostJid]
         });
 
         const messageId = sentMsg?.key?.id;
         if (!messageId) throw new Error('Failed to send giveaway message');
 
+        // Automatically react with the emoji so users know what to react with
         await sock.sendMessage(groupId, {
             react: {
                 text: emoji,
