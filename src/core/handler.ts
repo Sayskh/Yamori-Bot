@@ -68,6 +68,24 @@ function extractBody(msg: WAMessage): string {
     const m = msg.message;
     if (!m) return '';
 
+    // Extract from interactive response (MessageBuilder quick reply buttons)
+    const interactive = (m as any).interactiveResponseMessage;
+    const nativeFlowParamJson = interactive?.nativeFlowResponseMessage?.paramsJson;
+    if (nativeFlowParamJson) {
+        try {
+            const parsed = JSON.parse(nativeFlowParamJson);
+            if (parsed && parsed.id) return parsed.id;
+        } catch {}
+    }
+
+    // Extract from standard buttons response
+    const selectedButtonId = (m as any).buttonsResponseMessage?.selectedButtonId;
+    if (selectedButtonId) return selectedButtonId;
+
+    // Extract from template buttons response
+    const selectedTemplateId = (m as any).templateButtonReplyMessage?.selectedId;
+    if (selectedTemplateId) return selectedTemplateId;
+
     return (
         m.conversation ||
         m.extendedTextMessage?.text ||
@@ -124,6 +142,10 @@ async function messageHandler(
             ? (msg.key.participantAlt || msg.key.participant || '')
             : (remoteJidAlt || msg.key.participant || from);
 
+        if (msg.key.fromMe && config.selfBot) {
+            sender = normalizeBotId(sock);
+        }
+
         if (sender.includes(':')) {
             const num = sender.split(':')[0];
             const suffix = sender.split('@')[1] || 's.whatsapp.net';
@@ -133,7 +155,7 @@ async function messageHandler(
         const senderNumber = sender.split('@')[0];
         const pushname = msg.pushName || senderNumber;
 
-        const isBotAdmin = checkBotAdmin(sender);
+        const isBotAdmin = checkBotAdmin(sender) || (msg.key.fromMe === true && config.selfBot);
 
         let isGroupAdmin = false;
         let isUser = false;
@@ -154,6 +176,7 @@ async function messageHandler(
         }
 
         if (!isGroup && !isBotAdmin && config.blockDms) return;
+        if (isGroup && !isBotAdmin && config.blockGroups) return;
 
         const body = extractBody(msg);
         if (!body.trim()) return;

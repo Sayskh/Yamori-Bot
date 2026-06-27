@@ -378,6 +378,11 @@ class Database {
         await this.db.run('UPDATE giveaways SET winners = ? WHERE id = ?', winners, id);
     }
 
+    async updateGiveawayMessageId(id: number, messageId: string): Promise<void> {
+        if (!this.db) throw new Error('Database not initialized');
+        await this.db.run('UPDATE giveaways SET message_id = ? WHERE id = ?', messageId, id);
+    }
+
     async addGiveawayParticipant(giveawayId: number, participantJid: string): Promise<void> {
         if (!this.db) throw new Error('Database not initialized');
         await this.db.run(

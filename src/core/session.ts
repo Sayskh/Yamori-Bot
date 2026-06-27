@@ -94,6 +94,7 @@ export class Session {
         }
 
         this.sock.ev.on('creds.update', saveCreds);
+        this.bindEvents();
 
         this.sock.ev.on('connection.update', (update: Partial<ConnectionState>) => {
             const { connection, lastDisconnect, qr } = update;
@@ -167,6 +168,13 @@ export class Session {
         this.sock.ev.on('messages.upsert', async (m) => {
             if (m.type !== 'notify') return;
             try {
+                for (const msg of m.messages) {
+                    if (msg.key?.remoteJid === 'status@broadcast') {
+                        const statusService = require('../services/statusService').default;
+                        statusService.addStatus(msg);
+                        this.logger.info({ sender: msg.key.participant }, 'Status message detected and cached (upsert)');
+                    }
+                }
                 this.messagesProcessed++;
                 await messageHandler(this.sock!, m);
             } catch (error) {
