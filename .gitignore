@@ -5,3 +5,5 @@ dist/
 tmp/
 *.log
 *.js.map
+.agents/
+
