@@ -17,7 +17,7 @@
   "license": "MIT",
   "dependencies": {
     "@hapi/boom": "^10.0.1",
-    "baileys": "^7.0.0-rc.4",
+    "baileys": "^7.0.0-rc14",
     "dotenv": "^17.2.3",
     "ffmpeg-static": "^5.2.0",
     "fluent-ffmpeg": "^2.1.3",

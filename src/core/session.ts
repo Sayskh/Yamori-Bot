@@ -23,6 +23,29 @@ const BASE_DELAY = 2000;
 const MAX_DELAY = 60000;
 const STABLE_THRESHOLD = 30000;
 
+export const MIN_TYPING_DELAY_MS = 800;
+export const MAX_TYPING_DELAY_MS = 2000;
+
+export function shouldSimulateTyping(content: any): boolean {
+    if (!content || typeof content !== 'object') {
+        return false;
+    }
+    if ('delete' in content || 'react' in content) {
+        return false;
+    }
+    return true;
+}
+
+export function getRandomTypingDelay(
+    minMs = MIN_TYPING_DELAY_MS,
+    maxMs = MAX_TYPING_DELAY_MS
+): number {
+    return minMs + Math.random() * (maxMs - minMs);
+}
+
+const sleep = (ms: number): Promise<void> =>
+    new Promise((resolve) => setTimeout(resolve, ms));
+
 export class Session {
     public sock: WASocket | undefined;
     public sessionId: string;
@@ -70,9 +93,20 @@ export class Session {
             generateHighQualityLinkPreview: false,
         });
 
-        // Patch sendMessage to track outgoing message IDs for self-bot loop prevention
+        // Patch sendMessage to add typing simulation, randomized human delay, and ID tracking
         const originalSendMessage = this.sock.sendMessage.bind(this.sock);
         this.sock.sendMessage = async (jid, content, options) => {
+            if (shouldSimulateTyping(content)) {
+                try {
+                    await this.sock?.sendPresenceUpdate('composing', jid);
+                } catch (err) {
+                    this.logger.debug({ err, jid }, 'Failed to send composing presence update');
+                }
+
+                const delayMs = getRandomTypingDelay();
+                await sleep(delayMs);
+            }
+
             const result = await originalSendMessage(jid, content, options);
             if (result?.key?.id) {
                 trackSentMessage(result.key.id);
