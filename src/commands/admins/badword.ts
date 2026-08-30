@@ -21,9 +21,16 @@ const command: Command = {
 
         const db = dataManager.db;
 
+const MAX_BADWORD_LENGTH = 50;
+
         if (subCommand === 'add') {
             if (words.length === 0) {
                 await sock.sendMessage(from, { text: t('badword_add_empty', { prefix }) }, { quoted: msg });
+                return;
+            }
+
+            if (words.some(w => w.length > MAX_BADWORD_LENGTH)) {
+                await sock.sendMessage(from, { text: t('badword_limit') }, { quoted: msg });
                 return;
             }
 

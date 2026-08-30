@@ -41,6 +41,12 @@ const command: Command = {
             return;
         }
 
+        const MAX_MESSAGE_LENGTH = 2000;
+        if (message.length > MAX_MESSAGE_LENGTH) {
+            await sock.sendMessage(from, { text: t('message_limit') }, { quoted: msg });
+            return;
+        }
+
         if (message.toLowerCase() === 'off') {
             if (type === 'lock') {
                 await db.setLockMessage(botId, from, null);
