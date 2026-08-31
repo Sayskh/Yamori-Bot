@@ -16,8 +16,11 @@ export async function downloadMedia(platform: string, url: string): Promise<any>
         throw new ApiError(500, 'API_URL belum diset di environment');
     }
 
-    // Trim trailing slash from API_BASE if present to ensure clean URL
-    const baseUrl = API_BASE.endsWith('/') ? API_BASE : `${API_BASE}/`;
+    let cleanBase = API_BASE.trim();
+    if (!cleanBase.startsWith('http://') && !cleanBase.startsWith('https://')) {
+        cleanBase = `https://${cleanBase}`;
+    }
+    const baseUrl = cleanBase.endsWith('/') ? cleanBase : `${cleanBase}/`;
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
